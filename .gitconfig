@@ -1,0 +1,40 @@
+[alias]
+        st = status
+[branch]
+	sort = committerdate
+[commit]
+        verbose = true
+[core]
+	pager = delta
+	excludeFiles = ~/.gitignore
+[delta]
+        dark = true
+        navigate = true
+[diff]
+        colorMoved = default
+        historgram
+[help]
+        autocorrect = 10
+[http]
+        followRedirects = true
+[init]
+        defaultBranch = main
+[interactive]
+        diffFilter = delta --color-only
+[merge]
+        conflictstyle = diff3
+        conflictstyle = zdiff3
+[pull]
+        ff = only
+[push]
+        autoSetupRemote = true
+[rebase]
+        autosquash = true
+        autostash = true
+[rerere]
+        enabled = true
+[url "git@github.com:"]
+	pushInsteadOf = "https://github.com/"
+[user]
+        email = alexis.manuelpro@gmail.com
+        name = alexismanuel
