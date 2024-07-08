@@ -10,7 +10,7 @@ if [ $? = 0 ]; then
   echo "Checked out dotfiles from git@github.com:alexismanuel/dotfiles.git";
   else
     echo "Moving existing dotfiles to ~/.dotfiles-backup";
-    config checkout 2>&1 | egrep "\s+\." | awk {'print $1'} | xargs -I{} mv {} .dotfiles-backup/{}
+    dotfiles checkout 2>&1 | egrep "\s+\." | awk {'print $1'} | xargs -I{} mv {} .dotfiles-backup/{}
 fi
 
 dotfiles checkout
