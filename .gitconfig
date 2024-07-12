@@ -1,5 +1,8 @@
 [alias]
         st = status
+	aall = add .
+	cm = commit -m
+	pf = push --force
 [branch]
 	sort = committerdate
 [commit]
@@ -12,7 +15,6 @@
         navigate = true
 [diff]
         colorMoved = default
-        historgram
 [help]
         autocorrect = 10
 [http]
