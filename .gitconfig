@@ -3,6 +3,7 @@
 	aall = add .
 	cm = commit -m
 	pf = push --force
+	lg = log --graph --pretty=tformat:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --decorate=full
 [branch]
 	sort = committerdate
 [commit]
