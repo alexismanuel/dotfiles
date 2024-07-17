@@ -4,6 +4,7 @@
 	cm = commit -m
 	pf = push --force
 	lg = log --graph --pretty=tformat:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --decorate=full
+	rst = reset HEAD^
 [branch]
 	sort = committerdate
 [commit]
