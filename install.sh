@@ -5,13 +5,13 @@ function df {
 }
 
 mkdir -p .dotfiles-backup
-dotfiles checkout
+df checkout
 if [ $? = 0 ]; then
   echo "Checked out dotfiles from git@github.com:alexismanuel/dotfiles.git";
   else
     echo "Moving existing dotfiles to ~/.dotfiles-backup";
-    dotfiles checkout 2>&1 | egrep "\s+\." | awk {'print $1'} | xargs -I{} mv {} .dotfiles-backup/{}
+    df checkout 2>&1 | egrep "\s+\." | awk {'print $1'} | xargs -I{} mv {} .dotfiles-backup/{}
 fi
 
-dotfiles checkout
-dotfiles config status.showUntrackedFiles no
+df checkout
+df config status.showUntrackedFiles no
