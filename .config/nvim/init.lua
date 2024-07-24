@@ -1,6 +1,6 @@
-vim.cmd('set number')
-vim.cmd('set num=3')
-vim.cmd('set softtabstop=4')
-vim.cmd('set tabstop=4')
-vim.cmd('set shiftwidth=4')
-vim.cmd('set mouse=')
+vim.opt.number = true
+vim.opt.numberwidth = 3
+vim.opt.softtabstop = 4
+vim.opt.tabstop = 4
+vim.opt.shiftwidth = 4
+vim.opt.mouse = ''
