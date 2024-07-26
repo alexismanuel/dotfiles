@@ -42,10 +42,22 @@ local plugins = {
 			require("nvim-tree").setup {}
 		end,
 	},
-	{"nvim-treesitter/nvim-treesitter", build = ":TSUpdate"},
+	{
+		"nvim-treesitter/nvim-treesitter",
+		build = ":TSUpdate"
+	},
 	{
 		'nvim-telescope/telescope.nvim', tag = '0.1.8',
 		dependencies = {'nvim-lua/plenary.nvim'}
+	},
+	{
+		'williamboman/mason.nvim',
+		'williamboman/mason-lspconfig.nvim',
+		'VonHeikemen/lsp-zero.nvim', branch = 'v3.x',
+		'neovim/nvim-lspconfig',
+		'hrsh7th/cmp-nvim-lsp',
+		'hrsh7th/nvim-cmp',
+		'L3MON4D3/LuaSnip',
 	}
 }
 
@@ -119,3 +131,83 @@ require 'nvim-treesitter.configs'.setup {
     	highlight = { enable = true },
 	indent = { enable = true }, 
 }
+
+
+local cmp = require('cmp')
+cmp.setup({
+	snippet = {
+		expand = function(args)
+			vim.fn["vsnip#anonymous"](args.body)
+	    end,
+	},
+	window = {
+		completion = cmp.config.window.bordered(),
+		documentation = cmp.config.window.bordered(),
+    },
+	mapping = cmp.mapping.preset.insert({
+      ['<Tab>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+    }),
+	sources = cmp.config.sources({
+      { name = 'nvim_lsp' },
+      { name = 'luasnip' }, -- For luasnip users.
+    }, {
+      { name = 'buffer' },
+    })
+})
+
+
+
+
+
+local lsp_zero = require('lsp-zero')
+
+lsp_zero.on_attach(function(client, bufnr)
+  -- see :help lsp-zero-keybindings
+  -- to learn the available actions
+  lsp_zero.default_keymaps({buffer = bufnr})
+end)
+
+local lspconfig = require("lspconfig")
+
+local on_attach = function(client, bufnr)
+  if client.name == 'ruff' then
+    -- Disable hover in favor of Pyright
+    client.server_capabilities.hoverProvider = false
+  end
+end
+
+-- to learn how to use mason.nvim
+-- read this: https://github.com/VonHeikemen/lsp-zero.nvim/blob/v3.x/doc/md/guides/integrate-with-mason-nvim.md
+require('mason').setup({})
+require('mason-lspconfig').setup({
+  ensure_installed = {},
+  handlers = {
+    function(server_name)
+      lspconfig[server_name].setup({})
+    end,
+	ruff = function()
+        lspconfig.ruff.setup {
+			on_attach = on_attach
+		}
+    end,
+    basedpyright = function()
+		lspconfig.basedpyright.setup({
+			settings = {
+				basedpyright = {
+					disableOrganizeImports = true,
+					disableTaggedHints = false,
+					analysis = {
+						typeCheckingMode = "standard",
+						useLibraryCodeForTypes = true, -- Analyze library code for type information
+						autoImportCompletions = true,
+						autoSearchPaths = true,
+						diagnosticSeverityOverrides = {
+							reportIgnoreCommentWithoutRule = true,
+						},
+					},
+				},
+			},
+        })
+    end,
+  },
+})
