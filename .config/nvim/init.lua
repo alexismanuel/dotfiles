@@ -58,6 +58,9 @@ local plugins = {
 		'hrsh7th/cmp-nvim-lsp',
 		'hrsh7th/nvim-cmp',
 		'L3MON4D3/LuaSnip',
+	},
+	{
+		'akinsho/toggleterm.nvim', version = "*", config = true
 	}
 }
 
@@ -167,7 +170,6 @@ lsp_zero.on_attach(function(client, bufnr)
   lsp_zero.default_keymaps({buffer = bufnr})
 end)
 
-local lspconfig = require("lspconfig")
 
 local on_attach = function(client, bufnr)
   if client.name == 'ruff' then
@@ -175,12 +177,12 @@ local on_attach = function(client, bufnr)
     client.server_capabilities.hoverProvider = false
   end
 end
-
+local lspconfig = require('lspconfig')
 -- to learn how to use mason.nvim
 -- read this: https://github.com/VonHeikemen/lsp-zero.nvim/blob/v3.x/doc/md/guides/integrate-with-mason-nvim.md
 require('mason').setup({})
 require('mason-lspconfig').setup({
-  ensure_installed = {},
+  ensure_installed = {'ruff', 'basedpyright'},
   handlers = {
     function(server_name)
       lspconfig[server_name].setup({})
@@ -211,3 +213,71 @@ require('mason-lspconfig').setup({
     end,
   },
 })
+
+vim.keymap.set('n', '<C-t>', ':ToggleTerm<CR>')
+require('toggleterm').setup{
+	shade_terminal = false,
+	direction = 'float',
+	border = 'curved',
+	persist_mode = true,
+	shell = bash,
+	float_opts = {
+		border = 'curved',
+		width = 130,
+		height = 30,
+	}
+}
+
+function _G.set_terminal_keymaps()
+  local opts = {buffer = 0}
+  vim.keymap.set('t', '<esc>', [[<C-\><C-n>]], opts)
+  vim.keymap.set('t', 'jk', [[<C-\><C-n>]], opts)
+  vim.keymap.set('t', '<C-h>', [[<Cmd>wincmd h<CR>]], opts)
+  vim.keymap.set('t', '<C-j>', [[<Cmd>wincmd j<CR>]], opts)
+  vim.keymap.set('t', '<C-k>', [[<Cmd>wincmd k<CR>]], opts)
+  vim.keymap.set('t', '<C-l>', [[<Cmd>wincmd l<CR>]], opts)
+  vim.keymap.set('t', '<C-w>', [[<C-\><C-n><C-w>]], opts)
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
