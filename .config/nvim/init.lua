@@ -8,17 +8,17 @@ vim.opt.mouse = ''
 -- Bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
-  local lazyrepo = "https://github.com/folke/lazy.nvim.git"
-  local out = vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
-  if vim.v.shell_error ~= 0 then
-    vim.api.nvim_echo({
-      { "Failed to clone lazy.nvim:\n", "ErrorMsg" },
-      { out, "WarningMsg" },
-      { "\nPress any key to exit..." },
-    }, true, {})
-    vim.fn.getchar()
-    os.exit(1)
-  end
+	local lazyrepo = "https://github.com/folke/lazy.nvim.git"
+	local out = vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
+	if vim.v.shell_error ~= 0 then
+		vim.api.nvim_echo({
+			{ "Failed to clone lazy.nvim:\n", "ErrorMsg" },
+			{ out, "WarningMsg" },
+			{ "\nPress any key to exit..." },
+		}, true, {})
+		vim.fn.getchar()
+		os.exit(1)
+	end
 end
 
 vim.opt.rtp:prepend(lazypath)
@@ -119,8 +119,8 @@ vim.opt.termguicolors = true
 -- empty setup using defaults
 require("nvim-tree").setup()
 
-vim.keymap.set('n', '<C-t>', ':NvimTreeFindFileToggle<CR>')
-vim.keymap.set('n', '<C-n>', ':NvimTreeToggle<CR>')
+vim.keymap.set('n', '<leader>tf', ':NvimTreeFindFileToggle<CR>')
+vim.keymap.set('n', '<leader>F', ':NvimTreeFocus<CR>')
 
 local builtin = require('telescope.builtin')
 vim.keymap.set('n', '<leader>ff', builtin.find_files, {})
@@ -157,9 +157,6 @@ cmp.setup({
       { name = 'buffer' },
     })
 })
-
-
-
 
 
 local lsp_zero = require('lsp-zero')
@@ -217,15 +214,10 @@ require('mason-lspconfig').setup({
 vim.keymap.set('n', '<C-t>', ':ToggleTerm<CR>')
 require('toggleterm').setup{
 	shade_terminal = false,
-	direction = 'float',
+	direction = 'horizontal',
 	border = 'curved',
 	persist_mode = true,
 	shell = bash,
-	float_opts = {
-		border = 'curved',
-		width = 130,
-		height = 30,
-	}
 }
 
 function _G.set_terminal_keymaps()
@@ -238,46 +230,4 @@ function _G.set_terminal_keymaps()
   vim.keymap.set('t', '<C-l>', [[<Cmd>wincmd l<CR>]], opts)
   vim.keymap.set('t', '<C-w>', [[<C-\><C-n><C-w>]], opts)
 end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
