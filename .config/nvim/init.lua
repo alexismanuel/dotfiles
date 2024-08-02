@@ -23,6 +23,8 @@ end
 
 vim.opt.rtp:prepend(lazypath)
 
+vim.keymap.set('n', '<leader>L', ':Lazy<CR>')
+
 local plugins = {
 	{ "catppuccin/nvim", name = "catppuccin", priority = 1000 },
 	{
