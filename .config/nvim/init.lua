@@ -23,7 +23,7 @@ end
 
 vim.opt.rtp:prepend(lazypath)
 
-vim.keymap.set('n', '<leader>L', ':Lazy<CR>')
+vim.keymap.set('n', '<leader>l', ':Lazy<CR>')
 
 local plugins = {
 	{ "catppuccin/nvim", name = "catppuccin", priority = 1000 },
@@ -140,8 +140,7 @@ vim.opt.termguicolors = true
 -- empty setup using defaults
 require("nvim-tree").setup()
 
-vim.keymap.set('n', '<leader>tf', ':NvimTreeFindFileToggle<CR>')
-vim.keymap.set('n', '<leader>F', ':NvimTreeFocus<CR>')
+vim.keymap.set('n', '<leader>e', ':NvimTreeFindFileToggle<CR>')
 
 local builtin = require('telescope.builtin')
 vim.keymap.set('n', '<leader>ff', builtin.find_files, {})
@@ -232,7 +231,7 @@ require('mason-lspconfig').setup({
   },
 })
 
-vim.keymap.set('n', '<C-t>', ':ToggleTerm<CR>')
+vim.keymap.set('n', '<leader>t', ':ToggleTerm<CR>')
 require('toggleterm').setup{
 	shade_terminal = false,
 	direction = 'horizontal',
