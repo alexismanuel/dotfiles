@@ -50,7 +50,14 @@ local plugins = {
 	},
 	{
 		'nvim-telescope/telescope.nvim', tag = '0.1.8',
-		dependencies = {'nvim-lua/plenary.nvim'}
+		dependencies = {
+			{'nvim-lua/plenary.nvim'},
+			{
+				"nvim-telescope/telescope-live-grep-args.nvim",
+				version = "^1.0.0",
+			},
+		}
+
 	},
 	{
 		'williamboman/mason.nvim',
@@ -142,11 +149,11 @@ require("nvim-tree").setup()
 
 vim.keymap.set('n', '<leader>e', ':NvimTreeFindFileToggle<CR>')
 
-local builtin = require('telescope.builtin')
-vim.keymap.set('n', '<leader>ff', builtin.find_files, {})
-vim.keymap.set('n', '<leader>fg', builtin.live_grep, {})
-vim.keymap.set('n', '<leader>fb', builtin.buffers, {})
-vim.keymap.set('n', '<leader>fh', builtin.help_tags, {})
+local telescope_builtin = require('telescope.builtin')
+vim.keymap.set('n', '<leader>ff', telescope_builtin.find_files, {})
+vim.keymap.set('n', '<leader>fb', telescope_builtin.buffers, {})
+vim.keymap.set('n', '<leader>fh', telescope_builtin.help_tags, {})
+vim.keymap.set("n", "<leader>fg", ":lua require('telescope').extensions.live_grep_args.live_grep_args()<CR>")
 
 require 'nvim-treesitter.configs'.setup {
 	ensure_installed = { "c", "lua", "vim", "vimdoc", "query", "elixir", "heex", "javascript", "html" },
@@ -234,7 +241,7 @@ require('mason-lspconfig').setup({
 vim.keymap.set('n', '<leader>t', ':ToggleTerm<CR>')
 require('toggleterm').setup{
 	size = 20,
-	open_mapping = [[<c-\>]],
+	open_mapping = [[<leader>t]],
 	hide_numbers = true,
 	shade_filetypes = {},
 	shade_terminals = true,
@@ -242,17 +249,9 @@ require('toggleterm').setup{
 	start_in_insert = true,
 	insert_mappings = true,
 	persist_size = true,
-	direction = "float",
+	direction = "horizontal",
 	close_on_exit = true,
 	shell = vim.o.shell,
-	float_opts = {
-		border = "curved",
-		winblend = 0,
-		highlights = {
-			border = "Normal",
-			background = "Normal",
-		},
-	},
 }
 
 function _G.set_terminal_keymaps()
@@ -265,4 +264,4 @@ function _G.set_terminal_keymaps()
   vim.keymap.set('t', '<C-l>', [[<Cmd>wincmd l<CR>]], opts)
   vim.keymap.set('t', '<C-w>', [[<C-\><C-n><C-w>]], opts)
 end
-
+vim.cmd('autocmd! TermOpen term://* lua set_terminal_keymaps()')
