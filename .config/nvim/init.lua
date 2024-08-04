@@ -207,7 +207,7 @@ local on_attach = function(client, bufnr)
 			io.close(f)
 			ruff_config_path = project_ruff_config
 		end
-		require('lspconfig').ruff_lsp.setup({
+		require('lspconfig').ruff.setup({
 			init_options = {
 				settings = {
 					format = {
@@ -257,7 +257,6 @@ require('mason-lspconfig').setup({
     end,
   },
 })
-
 vim.keymap.set('n', '<leader>t', ':ToggleTerm<CR>')
 require('toggleterm').setup{
 	size = 20,
