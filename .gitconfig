@@ -1,7 +1,9 @@
 [alias]
-        st = status
-	aall = add .
+    st = status
+	aa = add .
+	aap = add . -p
 	cm = commit -m
+	cma = commit --amend --no-edit 
 	pf = push --force
 	lg = log --graph --pretty=tformat:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --decorate=full
 	rst = reset HEAD^
