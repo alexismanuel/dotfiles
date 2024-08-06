@@ -247,9 +247,6 @@ require('mason-lspconfig').setup({
 						useLibraryCodeForTypes = true, -- Analyze library code for type information
 						autoImportCompletions = true,
 						autoSearchPaths = true,
-						diagnosticSeverityOverrides = {
-							reportIgnoreCommentWithoutRule = true,
-						},
 					},
 				},
 			},
