@@ -88,8 +88,8 @@ local plugins = {
 				desc = "Buffer Local Keymaps (which-key)",
 			},
 		},
-	}
-
+	},
+	{"ellisonleao/glow.nvim", config = true, cmd = "Glow"}
 }
 
 -- Setup
@@ -281,3 +281,8 @@ function _G.set_terminal_keymaps()
   vim.keymap.set('t', '<C-w>', [[<C-\><C-n><C-w>]], opts)
 end
 vim.cmd('autocmd! TermOpen term://* lua set_terminal_keymaps()')
+vim.keymap.set('n', '<leader>md', ':Glow<CR>')
+require('glow').setup({
+	--style = "dark",
+	--width = 120,
+})
