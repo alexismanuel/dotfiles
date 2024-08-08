@@ -1,9 +1,8 @@
 vim.opt.number = true
 vim.opt.numberwidth = 3
-vim.opt.softtabstop = 4
-vim.opt.tabstop = 4
-vim.opt.shiftwidth = 4
 vim.opt.mouse = ''
+
+vim.keymap.set('n', '<leader>sv', ':source $MYVIMRC<CR>')
 
 -- Bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
@@ -89,7 +88,8 @@ local plugins = {
 			},
 		},
 	},
-	{"ellisonleao/glow.nvim", config = true, cmd = "Glow"}
+	{"ellisonleao/glow.nvim", config = true, cmd = "Glow"},
+	{"Vimjas/vim-python-pep8-indent"}
 }
 
 -- Setup
