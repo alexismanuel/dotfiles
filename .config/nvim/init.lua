@@ -4,7 +4,10 @@ vim.opt.mouse = ''
 vim.opt.softtabstop = 4
 vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
-
+vim.o.foldcolumn = '1'
+vim.o.foldlevel = 99
+vim.o.foldlevelstart = 99
+vim.o.foldenable = true
 vim.keymap.set('n', '<leader>sv', ':source $MYVIMRC<CR>')
 
 -- Bootstrap lazy.nvim
@@ -92,7 +95,9 @@ local plugins = {
 		},
 	},
 	{"ellisonleao/glow.nvim", config = true, cmd = "Glow"},
-	{"Vimjas/vim-python-pep8-indent"}
+	{"Vimjas/vim-python-pep8-indent"},
+	{'kevinhwang91/nvim-ufo', dependencies = {'kevinhwang91/promise-async'}},
+	{"cappyzawa/trim.nvim"}
 }
 
 -- Setup
@@ -288,4 +293,9 @@ vim.keymap.set('n', '<leader>md', ':Glow<CR>')
 require('glow').setup({
 	--style = "dark",
 	--width = 120,
+})
+require('ufo').setup({
+    provider_selector = function(bufnr, filetype, buftype)
+        return {'treesitter', 'indent'}
+    end
 })
