@@ -25,7 +25,7 @@ end
 config.color_scheme = 'Catppuccin Macchiato'
 -- This is my chosen font, we will get into installing fonts on windows later
 --config.font = wezterm.font('Jet Brain Mono')
-config.font_size = 11
+config.font_size = 8
 config.launch_menu = launch_menu
 -- makes my cursor blink 
 config.default_cursor_style = 'BlinkingBar'
