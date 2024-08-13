@@ -102,16 +102,16 @@ local plugins = {
 
 -- Setup
 require("lazy").setup({
-  spec = plugins,
-  -- Configure any other settings here. See the documentation for more details.
-  -- colorscheme that will be used when installing plugins.
-  install = { colorscheme = { "catppuccin-macchiato" } },
-  -- automatically check for plugin updates
-  checker = { enabled = true },
+	spec = plugins,
+	-- Configure any other settings here. See the documentation for more details.
+	-- colorscheme that will be used when installing plugins.
+	install = { colorscheme = { "catppuccin-macchiato" } },
+	-- automatically check for plugin updates
+	checker = { enabled = true },
 })
 require("lualine").setup {
-    options = {
-	    theme = "auto",
+	options = {
+		theme = "auto",
 	}
 }
 require('autoclose').setup()
@@ -165,8 +165,8 @@ vim.keymap.set("n", "<leader>fg", ":lua require('telescope').extensions.live_gre
 
 require 'nvim-treesitter.configs'.setup {
 	ensure_installed = { "c", "lua", "vim", "vimdoc", "query", "elixir", "heex", "javascript", "html" },
-    	sync_install = false,
-    	highlight = { enable = true },
+	sync_install = false,
+	highlight = { enable = true },
 	indent = { enable = true }, 
 }
 
@@ -176,32 +176,38 @@ cmp.setup({
 	snippet = {
 		expand = function(args)
 			vim.fn["vsnip#anonymous"](args.body)
-	    end,
+		end,
 	},
 	window = {
 		completion = cmp.config.window.bordered(),
 		documentation = cmp.config.window.bordered(),
-    },
+	},
 	mapping = cmp.mapping.preset.insert({
-      ['<Tab>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
-    }),
+		['<Tab>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+	}),
 	sources = cmp.config.sources({
-      { name = 'nvim_lsp' },
-      { name = 'luasnip' }, -- For luasnip users.
-    }, {
-      { name = 'buffer' },
-    })
+		{ name = 'nvim_lsp' },
+		{ name = 'luasnip' }, -- For luasnip users.
+	}, {
+			{ name = 'buffer' },
+		})
 })
 
 
 local lsp_zero = require('lsp-zero')
 
 lsp_zero.on_attach(function(client, bufnr)
-  -- see :help lsp-zero-keybindings
-  -- to learn the available actions
-  lsp_zero.default_keymaps({buffer = bufnr})
-end)
+	-- see :help lsp-zero-keybindings
+	-- to learn the available actions
+	lsp_zero.default_keymaps({buffer = bufnr})
 
+	local opts = { noremap = true, silent = true, buffer = bufnr }
+	vim.keymap.set('n', 'gr', '<cmd>lua vim.lsp.buf.rename()<cr>', opts)
+	vim.keymap.set("n", "gD", vim.lsp.buf.declaration, bufopts)
+	vim.keymap.set("n", "gd", vim.lsp.buf.definition, bufopts)
+	vim.keymap.set("n", "gi", vim.lsp.buf.implementation, bufopts)
+
+end)
 
 local on_attach = function(client, bufnr)
 	if client.name == 'ruff' then
@@ -234,33 +240,33 @@ local lspconfig = require('lspconfig')
 -- read this: https://github.com/VonHeikemen/lsp-zero.nvim/blob/v3.x/doc/md/guides/integrate-with-mason-nvim.md
 require('mason').setup({})
 require('mason-lspconfig').setup({
-  ensure_installed = {'ruff', 'basedpyright'},
-  handlers = {
-    function(server_name)
-      lspconfig[server_name].setup({})
-    end,
-	ruff = function()
-        lspconfig.ruff.setup {
-			on_attach = on_attach
-		}
-    end,
-    basedpyright = function()
-		lspconfig.basedpyright.setup({
-			settings = {
-				basedpyright = {
-					disableOrganizeImports = true,
-					disableTaggedHints = false,
-					analysis = {
-						typeCheckingMode = "standard",
-						useLibraryCodeForTypes = true, -- Analyze library code for type information
-						autoImportCompletions = true,
-						autoSearchPaths = true,
+	ensure_installed = {'ruff', 'basedpyright'},
+	handlers = {
+		function(server_name)
+			lspconfig[server_name].setup({})
+		end,
+		ruff = function()
+			lspconfig.ruff.setup {
+				on_attach = on_attach
+			}
+		end,
+		basedpyright = function()
+			lspconfig.basedpyright.setup({
+				settings = {
+					basedpyright = {
+						disableOrganizeImports = true,
+						disableTaggedHints = false,
+						analysis = {
+							typeCheckingMode = "standard",
+							useLibraryCodeForTypes = true, -- Analyze library code for type information
+							autoImportCompletions = true,
+							autoSearchPaths = true,
+						},
 					},
 				},
-			},
-        })
-    end,
-  },
+			})
+		end,
+	},
 })
 vim.keymap.set('n', '<leader>t', ':ToggleTerm<CR>')
 require('toggleterm').setup{
@@ -279,14 +285,14 @@ require('toggleterm').setup{
 }
 
 function _G.set_terminal_keymaps()
-  local opts = {buffer = 0}
-  vim.keymap.set('t', '<esc>', [[<C-\><C-n>]], opts)
-  vim.keymap.set('t', 'jk', [[<C-\><C-n>]], opts)
-  vim.keymap.set('t', '<C-h>', [[<Cmd>wincmd h<CR>]], opts)
-  vim.keymap.set('t', '<C-j>', [[<Cmd>wincmd j<CR>]], opts)
-  vim.keymap.set('t', '<C-k>', [[<Cmd>wincmd k<CR>]], opts)
-  vim.keymap.set('t', '<C-l>', [[<Cmd>wincmd l<CR>]], opts)
-  vim.keymap.set('t', '<C-w>', [[<C-\><C-n><C-w>]], opts)
+	local opts = {buffer = 0}
+	vim.keymap.set('t', '<esc>', [[<C-\><C-n>]], opts)
+	vim.keymap.set('t', 'jk', [[<C-\><C-n>]], opts)
+	vim.keymap.set('t', '<C-h>', [[<Cmd>wincmd h<CR>]], opts)
+	vim.keymap.set('t', '<C-j>', [[<Cmd>wincmd j<CR>]], opts)
+	vim.keymap.set('t', '<C-k>', [[<Cmd>wincmd k<CR>]], opts)
+	vim.keymap.set('t', '<C-l>', [[<Cmd>wincmd l<CR>]], opts)
+	vim.keymap.set('t', '<C-w>', [[<C-\><C-n><C-w>]], opts)
 end
 vim.cmd('autocmd! TermOpen term://* lua set_terminal_keymaps()')
 vim.keymap.set('n', '<leader>md', ':Glow<CR>')
@@ -295,7 +301,7 @@ require('glow').setup({
 	--width = 120,
 })
 require('ufo').setup({
-    provider_selector = function(bufnr, filetype, buftype)
-        return {'treesitter', 'indent'}
-    end
+	provider_selector = function(bufnr, filetype, buftype)
+		return {'treesitter', 'indent'}
+	end
 })
