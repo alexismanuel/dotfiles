@@ -2,7 +2,6 @@ vim.keymap.set('n', '<leader>sv', ':source $MYVIMRC<CR>')
 vim.keymap.set('n', '<leader>l', ':Lazy<CR>')
 vim.keymap.set('n', '<leader>e', ':NvimTreeFindFileToggle<CR>')
 vim.keymap.set('n', '<leader>t', ':ToggleTerm<CR>')
-vim.keymap.set('n', '<leader>md', ':Glow<CR>')
 
 local map = vim.api.nvim_set_keymap
 local opts = { noremap = true, silent = true }
@@ -23,3 +22,5 @@ map('n', '<A-0>', '<Cmd>BufferLast<CR>', opts)
 map('n', '<A-p>', '<Cmd>BufferPin<CR>', opts)
 map('n', '<A-c>', '<Cmd>BufferClose<CR>', opts)
 
+vim.keymap.set('n', '<leader>md', ':MarkdownPreviewToggle<CR>')
+vim.keymap.set({'n', 'v'}, '<leader>y', [["+y]])

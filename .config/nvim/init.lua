@@ -10,7 +10,6 @@ require('plugins/cmp')
 require('plugins/lsp-zero')
 require('plugins/mason-lspconfig')
 require('plugins/toggleterm')
-require('plugins/glow')
 require('plugins/ufo')
 require('commands')
 

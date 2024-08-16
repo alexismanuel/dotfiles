@@ -80,10 +80,35 @@ local plugins = {
 			},
 		},
 	},
-	{"ellisonleao/glow.nvim", config = true, cmd = "Glow"},
 	{"Vimjas/vim-python-pep8-indent"},
 	{'kevinhwang91/nvim-ufo', dependencies = {'kevinhwang91/promise-async'}},
-	{"cappyzawa/trim.nvim"}
+	{"cappyzawa/trim.nvim"},
+	{
+		-- Install markdown preview, use npx if available.
+		"iamcco/markdown-preview.nvim",
+		cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
+		ft = { "markdown" },
+		build = function(plugin)
+			if vim.fn.executable "npx" then
+				vim.cmd("!cd " .. plugin.dir .. " && cd app && npx --yes yarn install")
+			else
+				vim.cmd [[Lazy load markdown-preview.nvim]]
+				vim.fn["mkdp#util#install"]()
+			end
+		end,
+		init = function()
+			if vim.fn.executable "npx" then vim.g.mkdp_filetypes = { "markdown" } end
+		end,
+	},
+	{
+		'rmagatti/auto-session',
+		config = function()
+			require('auto-session').setup({
+				log_level = 'error',
+				auto_session_suppress_dirs = {'~/', '~/Downloads'}
+			})
+		end,
+	}
 }
 
 -- Setup
