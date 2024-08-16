@@ -2,6 +2,7 @@
 my dotfiles
 
 ## System dependencies
+- pipx
 - wezterm
 - git
 - pyenv (3.9 up to 3.12))
@@ -9,7 +10,7 @@ my dotfiles
 - JetBrainsMono Font
 - nvim
 - docker
-- dbeaver
+- harlequin
 - postman
 - cookiecutter
 
