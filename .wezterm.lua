@@ -24,14 +24,18 @@ end
 -- https://wezfurlong.org/wezterm/colorschemes/index.html
 config.color_scheme = 'Catppuccin Macchiato'
 -- This is my chosen font, we will get into installing fonts on windows later
---config.font = wezterm.font('Jet Brain Mono')
-config.font_size = 8
+config.font = wezterm.font('JetBrainsMono Nerd Font')
+config.font_size = 10
 config.launch_menu = launch_menu
 -- makes my cursor blink 
 config.default_cursor_style = 'BlinkingBar'
 config.disable_default_key_bindings = true
 -- this adds the ability to use ctrl+v to paste the system clipboard 
-config.keys = {{ key = 'V', mods = 'CTRL', action = act.PasteFrom 'Clipboard' },}
+config.keys = {
+  { key = 'V', mods = 'CTRL', action = act.PasteFrom 'Clipboard' },
+  { key = '=', mods = 'CTRL', action = wezterm.action.IncreaseFontSize },
+  { key = '-', mods = 'CTRL', action = wezterm.action.DecreaseFontSize },
+}
 config.mouse_bindings = mouse_bindings
 
 -- There are mouse binding to mimc Windows Terminal and let you copy
