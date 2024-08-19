@@ -15,10 +15,3 @@ vim.opt.termguicolors = true
 vim.opt.scrolloff = 8
 vim.opt.sidescrolloff = 8
 
-vim.api.nvim_create_autocmd({'BufNewFile', 'BufRead'}, {
-	pattern = '*.py',
-	callback = function()
-		vim.opt.textwidth = 79
-		vim.opt.colorcolumn = '79'
-	end
-})
