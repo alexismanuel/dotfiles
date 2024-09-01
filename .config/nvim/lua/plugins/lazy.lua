@@ -108,7 +108,8 @@ local plugins = {
 				auto_session_suppress_dirs = {'~/', '~/Downloads'}
 			})
 		end,
-	}
+	},
+	{"mrjones2014/smart-splits.nvim"}
 }
 
 -- Setup

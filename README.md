@@ -3,7 +3,7 @@ my dotfiles
 
 ## System dependencies
 - pipx
-- wezterm
+- wezterm (both windows and wsl for smart splits)
 - git
 - pyenv (3.9 up to 3.12))
 - poetry

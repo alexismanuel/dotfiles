@@ -13,63 +13,88 @@ local launch_menu = {}
 
 -- This is for newer wezterm versions to use the config builder 
 if wezterm.config_builder then
-  config = wezterm.config_builder()
+	config = wezterm.config_builder()
 end
 
--- Default config settings
--- These are the default config settins needed to use Wezterm
--- Just add this and return config and that's all the basics you need
-
--- Color scheme, Wezterm has 100s of them you can see here:
--- https://wezfurlong.org/wezterm/colorschemes/index.html
+local function is_vim(pane)
+	return pane:get_user_vars().IS_NVIM == 'true'
+end
+local direction_keys = {
+	Left = 'h',
+	Down = 'j',
+	Up = 'k',
+	Right = 'l',
+	-- reverse lookup
+	h = 'Left',
+	j = 'Down',
+	k = 'Up',
+	l = 'Right',
+}
+local function split_nav(resize_or_move, key)
+	return {
+		key = key,
+		mods = resize_or_move == 'resize' and 'META' or 'CTRL',
+		action = wezterm.action_callback(
+			function(win, pane)
+				if resize_or_move == 'resize' then
+					win:perform_action({ AdjustPaneSize = { direction_keys[key], 3 } }, pane)
+				else
+					win:perform_action({ ActivatePaneDirection = direction_keys[key] }, pane)
+				end
+			end
+		),
+	}
+end
+config.leader = { key = '\\', mods = 'CTRL', timeout_milliseconds = 10000}
 config.color_scheme = 'Catppuccin Macchiato'
--- This is my chosen font, we will get into installing fonts on windows later
 config.font = wezterm.font('JetBrainsMono Nerd Font')
 config.font_size = 10
 config.launch_menu = launch_menu
 -- makes my cursor blink 
 config.default_cursor_style = 'BlinkingBar'
 config.disable_default_key_bindings = true
--- this adds the ability to use ctrl+v to paste the system clipboard 
 config.keys = {
-  { key = 'V', mods = 'CTRL', action = act.PasteFrom 'Clipboard' },
-  { key = '=', mods = 'CTRL', action = wezterm.action.IncreaseFontSize },
-  { key = '-', mods = 'CTRL', action = wezterm.action.DecreaseFontSize },
+	{ key = 'V', mods = 'CTRL', action = act.PasteFrom 'Clipboard' },
+	{ key = '=', mods = 'CTRL', action = wezterm.action.IncreaseFontSize },
+	{ key = '-', mods = 'CTRL', action = wezterm.action.DecreaseFontSize },
+	{ key = "s", mods = "LEADER", action = wezterm.action.SplitVertical{ domain = 'CurrentPaneDomain' }},
+	{ key = "v", mods = "LEADER", action = wezterm.action.SplitHorizontal{ domain = 'CurrentPaneDomain' }},
+	split_nav('move', 'h'),
+	split_nav('move', 'j'),
+	split_nav('move', 'k'),
+	split_nav('move', 'l'),
+	split_nav('resize', 'h'),
+	split_nav('resize', 'j'),
+	split_nav('resize', 'k'),
+	split_nav('resize', 'l'),
 }
 config.mouse_bindings = mouse_bindings
-
--- There are mouse binding to mimc Windows Terminal and let you copy
--- To copy just highlight something and right click. Simple
 mouse_bindings = {
-  {
-    event = { Down = { streak = 3, button = 'Left' } },
-    action = wezterm.action.SelectTextAtMouseCursor 'SemanticZone',
-    mods = 'NONE',
-  },
- {
-  event = { Down = { streak = 1, button = "Right" } },
-  mods = "NONE",
-  action = wezterm.action_callback(function(window, pane)
-   local has_selection = window:get_selection_text_for_pane(pane) ~= ""
-   if has_selection then
-    window:perform_action(act.CopyTo("ClipboardAndPrimarySelection"), pane)
-    window:perform_action(act.ClearSelection, pane)
-   else
-    window:perform_action(act({ PasteFrom = "Clipboard" }), pane)
-   end
-  end),
- },
+	{
+		event = { Down = { streak = 3, button = 'Left' } },
+		action = wezterm.action.SelectTextAtMouseCursor 'SemanticZone',
+		mods = 'NONE',
+	},
+	{
+		event = { Down = { streak = 1, button = "Right" } },
+		mods = "NONE",
+		action = wezterm.action_callback(function(window, pane)
+			local has_selection = window:get_selection_text_for_pane(pane) ~= ""
+			if has_selection then
+				window:perform_action(act.CopyTo("ClipboardAndPrimarySelection"), pane)
+				window:perform_action(act.ClearSelection, pane)
+			else
+				window:perform_action(act({ PasteFrom = "Clipboard" }), pane)
+			end
+		end),
+	},
 }
-
--- This is used to make my foreground (text, etc) brighter than my background
 config.foreground_text_hsb = {
-  hue = 1.0,
-  saturation = 1.2,
-  brightness = 1.5,
+	hue = 1.0,
+	saturation = 1.2,
+	brightness = 1.5,
 }
 
-
--- IMPORTANT: Sets WSL2 UBUNTU-20.04 as the default when opening Wezterm
 config.default_domain = 'WSL:Ubuntu-20.04'
 
 return config
