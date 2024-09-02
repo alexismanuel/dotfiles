@@ -14,4 +14,5 @@ vim.opt.termguicolors = true
 -- vim.opt.list = true
 vim.opt.scrolloff = 8
 vim.opt.sidescrolloff = 8
+vim.g.strip_whitespace_on_save = 1
 
