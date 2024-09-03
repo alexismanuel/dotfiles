@@ -48,7 +48,6 @@ local plugins = {
 				version = "^1.0.0",
 			},
 		}
-
 	},
 	{
 		'williamboman/mason.nvim',
@@ -84,7 +83,6 @@ local plugins = {
 	{'kevinhwang91/nvim-ufo', dependencies = {'kevinhwang91/promise-async'}},
 	{"cappyzawa/trim.nvim"},
 	{
-		-- Install markdown preview, use npx if available.
 		"iamcco/markdown-preview.nvim",
 		cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
 		ft = { "markdown" },
@@ -102,24 +100,28 @@ local plugins = {
 	},
 	{
 		'rmagatti/auto-session',
-		config = function()
-			require('auto-session').setup({
-				log_level = 'error',
-				auto_session_suppress_dirs = {'~/', '~/Downloads'}
-			})
-		end,
+		lazy = false,
+		---enables autocomplete for opts
+		---@module "auto-session"
+		---@type AutoSession.Config
+		opts = {
+			suppressed_dirs = { '~/', '~/Projects', '~/Downloads', '/' },
+			-- log_level = 'debug',
+		}
 	},
 	{"mrjones2014/smart-splits.nvim"},
 	{"ntpeters/vim-better-whitespace"},
-
+	{
+		"kndndrj/nvim-dbee",
+		dependencies = {"MunifTanjim/nui.nvim"},
+		build = function()
+			require("dbee").install()
+		end,
+	},
 }
 
--- Setup
 require("lazy").setup({
 	spec = plugins,
-	-- Configure any other settings here. See the documentation for more details.
-	-- colorscheme that will be used when installing plugins.
 	install = { colorscheme = { "catppuccin-macchiato" } },
-	-- automatically check for plugin updates
 	checker = { enabled = true },
 })

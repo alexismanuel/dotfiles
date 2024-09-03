@@ -24,3 +24,4 @@ map('n', '<A-c>', '<Cmd>BufferClose<CR>', opts)
 
 vim.keymap.set('n', '<leader>md', ':MarkdownPreviewToggle<CR>')
 vim.keymap.set({'n', 'v'}, '<leader>y', [["+y]])
+vim.keymap.set('n', '<leader>sq', ':lua require(\'dbee\').open()<CR>')
