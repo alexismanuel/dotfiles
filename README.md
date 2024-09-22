@@ -2,17 +2,15 @@
 my dotfiles
 
 ## System dependencies
-- pipx
-- wezterm (both windows and wsl for smart splits)
-- git
-- pyenv (3.9 up to 3.12))
-- poetry
-- JetBrainsMono Font
-- nvim
-- docker
-- harlequin
-- postman
-- cookiecutter
+- [pipx](https://github.com/pypa/pipx?tab=readme-ov-file#on-linux)
+- wezterm, both [windows](https://github.com/wez/wezterm/releases/download/20240203-110809-5046fc22/WezTerm-20240203-110809-5046fc22-setup.exe) and [wsl](https://wezfurlong.org/wezterm/install/linux.html#using-the-apt-repo) for smart splits
+- [git](https://git-scm.com/download/linux)
+- [pyenv](curl https://pyenv.run | bash) (with python versions 3.9 up to 3.12))
+- [poetry](https://python-poetry.org/docs/#installation)
+- [JetBrainsMono Font](https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/JetBrainsMono.zip)
+- [nvim](https://github.com/neovim/neovim/blob/master/INSTALL.md#ubuntu)
+- [docker](https://docs.docker.com/desktop/install/windows-install/)
+- [cookiecutter](https://github.com/cookiecutter/cookiecutter?tab=readme-ov-file#installation)
 
 ## Install
 ```bash
