@@ -1,4 +1,6 @@
 vim.opt.number = true
+vim.opt.relativenumber = true
+vim.opt.signcolumn = "number"
 vim.opt.numberwidth = 3
 vim.opt.mouse = ''
 vim.opt.softtabstop = 4
@@ -11,7 +13,6 @@ vim.o.foldenable = true
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 vim.opt.termguicolors = true
--- vim.opt.list = true
 vim.opt.scrolloff = 8
 vim.opt.sidescrolloff = 8
 vim.g.strip_whitespace_on_save = 1

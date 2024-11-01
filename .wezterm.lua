@@ -11,7 +11,7 @@ local keys = {}
 local mouse_bindings = {}
 local launch_menu = {}
 
--- This is for newer wezterm versions to use the config builder 
+-- This is for newer wezterm versions to use the config builder
 if wezterm.config_builder then
 	config = wezterm.config_builder()
 end
@@ -48,12 +48,13 @@ end
 config.leader = { key = '\\', mods = 'CTRL', timeout_milliseconds = 10000}
 config.color_scheme = 'Catppuccin Macchiato'
 config.font = wezterm.font('JetBrainsMono Nerd Font')
-config.font_size = 10
+config.font_size = 9
 config.launch_menu = launch_menu
--- makes my cursor blink 
+-- makes my cursor blink
 config.default_cursor_style = 'BlinkingBar'
 config.disable_default_key_bindings = true
 config.keys = {
+	{ key = 'C', mods = 'CTRL', action = act.CopyTo("ClipboardAndPrimarySelection") },
 	{ key = 'V', mods = 'CTRL', action = act.PasteFrom 'Clipboard' },
 	{ key = '=', mods = 'CTRL', action = wezterm.action.IncreaseFontSize },
 	{ key = '-', mods = 'CTRL', action = wezterm.action.DecreaseFontSize },
@@ -68,7 +69,6 @@ config.keys = {
 	split_nav('resize', 'k'),
 	split_nav('resize', 'l'),
 }
-config.mouse_bindings = mouse_bindings
 mouse_bindings = {
 	{
 		event = { Down = { streak = 3, button = 'Left' } },
@@ -89,6 +89,16 @@ mouse_bindings = {
 		end),
 	},
 }
+config.mouse_bindings = mouse_bindings
+
+for i = 1, 8 do
+	-- CTRL+ALT + number to activate that tab
+	table.insert(config.keys, {
+	  key = tostring(i),
+	  mods = 'CTRL|ALT',
+	  action = act.ActivateTab(i - 1),
+	})
+  end
 config.foreground_text_hsb = {
 	hue = 1.0,
 	saturation = 1.2,

@@ -3,9 +3,9 @@
 	aa = add .
 	aap = add . -p
 	cm = commit -m
-	cma = commit --amend --no-edit 
-	pf = push --force
-	lg = log --graph --pretty=tformat:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --decorate=full
+	cma = commit --amend --no-edit
+	pf = push --force-with-lease
+	lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative --decorate=full -n 10
 	rst = reset HEAD^
 [branch]
 	sort = committerdate
