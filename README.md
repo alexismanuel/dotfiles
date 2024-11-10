@@ -11,8 +11,22 @@ my dotfiles
 - [nvim](https://github.com/neovim/neovim/blob/master/INSTALL.md#ubuntu)
 - [docker](https://docs.docker.com/desktop/install/windows-install/)
 - [cookiecutter](https://github.com/cookiecutter/cookiecutter?tab=readme-ov-file#installation)
+- [espanso](https://espanso.org/install/)
+- [starship](https://github.com/starship/starship?tab=readme-ov-file#-installation)
+- [fastfetch](https://github.com/fastfetch-cli/fastfetch?tab=readme-ov-file#installation)
+
 
 ## Install
 ```bash
 curl https://raw.githubusercontent.com/alexismanuel/dotfiles/master/install.sh | bash
 ```
+
+## Specific Configs
+
+### Wezterm
+Shared config for both Windows / Linux:
+- Windows file location: `/mnt/c/Users/<user>/.wezterm.lua`
+- Linux file location: `~/.wezterm.lua`
+
+### Espanso
+- Folder location : `/mnt/c/Users/<user>/AppData/Roaming/espanso`
