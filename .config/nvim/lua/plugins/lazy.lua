@@ -118,6 +118,11 @@ local plugins = {
 			require("dbee").install()
 		end,
 	},
+	{
+		'NvChad/nvim-colorizer.lua',
+		event = "BufEnter",
+		config = true
+	}
 }
 
 require("lazy").setup({
