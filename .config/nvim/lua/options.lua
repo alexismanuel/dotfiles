@@ -17,3 +17,4 @@ vim.opt.scrolloff = 8
 vim.opt.sidescrolloff = 8
 vim.g.strip_whitespace_on_save = 1
 vim.o.sessionoptions="blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions"
+vim.opt.laststatus = 3
