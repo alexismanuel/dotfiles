@@ -2,6 +2,7 @@ vim.keymap.set('n', '<leader>sv', ':source $MYVIMRC<CR>')
 vim.keymap.set('n', '<leader>l', ':Lazy<CR>')
 vim.keymap.set('n', '<leader>e', ':NvimTreeFindFileToggle<CR>')
 vim.keymap.set('n', '<leader>t', ':ToggleTerm<CR>')
+vim.keymap.set('n', '<leader>h', ':DiffviewFileHistory %<CR>')
 
 local map = vim.api.nvim_set_keymap
 local opts = { noremap = true, silent = true }

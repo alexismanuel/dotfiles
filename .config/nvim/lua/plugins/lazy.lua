@@ -170,7 +170,8 @@ local plugins = {
 				ft = { "markdown", "Avante" },
 			},
 		},
-	}
+	},
+	{'sindrets/diffview.nvim'},
 }
 
 require("lazy").setup({
