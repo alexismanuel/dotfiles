@@ -6,7 +6,7 @@ local on_attach = function(client, bufnr)
 		local ruff_config_path = vim.loop.os_homedir() .. '/.config/ruff.toml'
 		local project_ruff_config = vim.loop.cwd() .. '/ruff.toml'
 		local f = io.open(project_ruff_config, 'r')
-		if f ~= nil then 
+		if f ~= nil then
 			io.close(f)
 			ruff_config_path = project_ruff_config
 		end
@@ -29,7 +29,7 @@ local lspconfig = require('lspconfig')
 -- read this: https://github.com/VonHeikemen/lsp-zero.nvim/blob/v3.x/doc/md/guides/integrate-with-mason-nvim.md
 require('mason').setup({})
 require('mason-lspconfig').setup({
-	ensure_installed = {'ruff', 'basedpyright'},
+	ensure_installed = {'ruff', 'basedpyright', 'terraformls', 'tflint'},
 	handlers = {
 		function(server_name)
 			lspconfig[server_name].setup({})
