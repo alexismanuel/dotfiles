@@ -12,6 +12,6 @@ require('plugins/mason-lspconfig')
 require('plugins/toggleterm')
 require('plugins/ufo')
 require('plugins/dbee')
-require('plugins/diffview')
+-- require('plugins/diffview')
 require('commands')
 

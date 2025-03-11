@@ -180,7 +180,7 @@ local plugins = {
 			},
 		},
 	},
-	{'sindrets/diffview.nvim'},
+	-- {'sindrets/diffview.nvim'},
 }
 
 require("lazy").setup({

@@ -50,7 +50,7 @@ symbol = " "
 style = "yellow"
 pyenv_version_name = true
 pyenv_prefix = ""
-format = '[${symbol}${pyenv_prefix}(${version} )(\($virtualenv\) )]($style)'
+format = '[${symbol}${pyenv_prefix}(${version} )]($style)'
 
 [palettes.catppuccin_macchiato]
 rosewater = "#f4dbd6"

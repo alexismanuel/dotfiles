@@ -1,4 +1,4 @@
--- These are the basic's for using wezterm.
+
 -- Mux is the mutliplexes for windows etc inside of the terminal
 -- Action is to perform actions on the terminal
 local wezterm = require 'wezterm'
@@ -48,7 +48,7 @@ end
 config.leader = { key = '\\', mods = 'CTRL', timeout_milliseconds = 10000}
 config.color_scheme = 'Catppuccin Macchiato'
 config.font = wezterm.font('JetBrainsMono Nerd Font')
-config.font_size = 9
+config.font_size = 10
 config.launch_menu = launch_menu
 -- makes my cursor blink
 config.default_cursor_style = 'BlinkingBar'
@@ -104,7 +104,4 @@ config.foreground_text_hsb = {
 	saturation = 1.2,
 	brightness = 1.5,
 }
-
-config.default_domain = 'WSL:Ubuntu-20.04'
-
 return config
