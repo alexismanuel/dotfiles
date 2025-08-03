@@ -14,9 +14,16 @@ eval "$(pyenv virtualenv-init -)"
 export PATH='/Users/alexismanuel/.duckdb/cli/latest':$PATH
 export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
 export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
+export PATH="/Users/alexismanuel/.local/bin:$PATH"
 
 export PYENV_VIRTUALENV_DISABLE_PROMPT=1
 eval "$(starship init zsh)"
 fastfetch
 bindkey -v
 
+
+# opencode
+export PATH=/Users/alexismanuel/.opencode/bin:$PATH
+
+# GPG
+export GPG_TTY=$(tty)

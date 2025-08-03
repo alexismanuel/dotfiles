@@ -49,10 +49,9 @@ local plugins = {
 			},
 		}
 	},
-	{
-		'williamboman/mason.nvim',
-		'williamboman/mason-lspconfig.nvim',
-		'VonHeikemen/lsp-zero.nvim', branch = 'v3.x',
+	{'williamboman/mason.nvim', version = '^1.0.0'},
+	{'williamboman/mason-lspconfig.nvim', version = '^1.0.0'},
+	{	'VonHeikemen/lsp-zero.nvim',
 		'neovim/nvim-lspconfig',
 		'hrsh7th/cmp-nvim-lsp',
 		'hrsh7th/nvim-cmp',
@@ -86,37 +85,23 @@ local plugins = {
 		"iamcco/markdown-preview.nvim",
 		cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
 		ft = { "markdown" },
-		build = function(plugin)
-			if vim.fn.executable "npx" then
-				vim.cmd("!cd " .. plugin.dir .. " && cd app && npx --yes yarn install")
-			else
-				vim.cmd [[Lazy load markdown-preview.nvim]]
-				vim.fn["mkdp#util#install"]()
-			end
-		end,
-		init = function()
-			if vim.fn.executable "npx" then vim.g.mkdp_filetypes = { "markdown" } end
-		end,
-	},
-	{
-		'rmagatti/auto-session',
-		lazy = false,
-		---enables autocomplete for opts
-		---@module "auto-session"
-		---@type AutoSession.Config
-		opts = {
-			suppressed_dirs = { '~/', '~/Projects', '~/Downloads', '/' },
-			-- log_level = 'debug',
-		}
+		build = function() vim.fn["mkdp#util#install"]() end,
+		-- build = function(plugin)
+		-- 	if vim.fn.executable "npx" then
+		-- 		vim.cmd("!cd " .. plugin.dir .. " && cd app && npx --yes yarn install")
+		-- 	else
+		-- 		vim.cmd [[Lazy load markdown-preview.nvim]]
+		-- 		vim.fn["mkdp#util#install"]()
+		-- 	end
+		-- end,
+		-- init = function()
+		-- 	if vim.fn.executable "npx" then vim.g.mkdp_filetypes = { "markdown" } end
+		-- end,
 	},
 	{"mrjones2014/smart-splits.nvim"},
-	{"ntpeters/vim-better-whitespace"},
 	{
-		"kndndrj/nvim-dbee",
-		dependencies = {"MunifTanjim/nui.nvim"},
-		build = function()
-			require("dbee").install()
-		end,
+		"ntpeters/vim-better-whitespace",
+		event = "BufRead",
 	},
 	{
 		'NvChad/nvim-colorizer.lua',
@@ -124,63 +109,55 @@ local plugins = {
 		config = true
 	},
 	{
-		"yetone/avante.nvim",
-		event = "VeryLazy",
+		"folke/snacks.nvim",
+		priority = 1000,
 		lazy = false,
-		version = false, -- set this if you want to always pull the latest change
+		---@type snacks.Config
 		opts = {
-			provider = "ollama",
-			vendors = {
-			  ollama = {
-				__inherited_from = "openai",
-				api_key_name = "",
-				endpoint = "http://127.0.0.1:11434/v1",
-				model = "deepseek-r1:latest",
-			  },
-			},
-			-- provider = "openai",
-			-- openai = {
-			-- 	model = "gpt-4o-mini"
-			-- }
+			-- your configuration comes here
+			-- or leave it empty to use the default settings
+			-- refer to the configuration section below
+			bigfile = { enabled = true },
+			dashboard = { enabled = true },
+			explorer = { enabled = false },
+			indent = { enabled = true },
+			input = { enabled = true },
+			picker = { enabled = true },
+			notifier = { enabled = true },
+			quickfile = { enabled = true },
+			scope = { enabled = true },
+			scroll = { enabled = true },
+			statuscolumn = { enabled = true },
+			words = { enabled = true },
 		},
-		-- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
-		build = "make",
-		-- build = "powershell -ExecutionPolicy Bypass -File Build.ps1 -BuildFromSource false" -- for windows
-		dependencies = {
-			"nvim-treesitter/nvim-treesitter",
-			"stevearc/dressing.nvim",
-			"nvim-lua/plenary.nvim",
-			"MunifTanjim/nui.nvim",
-			--- The below dependencies are optional,
-			"nvim-tree/nvim-web-devicons", -- or echasnovski/mini.icons
-			{
-				-- support for image pasting
-				"HakonHarnes/img-clip.nvim",
-				event = "VeryLazy",
-				opts = {
-					-- recommended settings
-					default = {
-						embed_image_as_base64 = false,
-						prompt_for_file_name = false,
-						drag_and_drop = {
-							insert_mode = true,
-						},
-						-- required for Windows users
-						use_absolute_path = true,
-					},
+	},
+	{
+		-- support for image pasting
+		"HakonHarnes/img-clip.nvim",
+		event = "VeryLazy",
+		opts = {
+			-- recommended settings
+			default = {
+				embed_image_as_base64 = false,
+				prompt_for_file_name = false,
+				drag_and_drop = {
+					insert_mode = true,
 				},
-			},
-			{
-				-- Make sure to set this up properly if you have lazy=true
-				'MeanderingProgrammer/render-markdown.nvim',
-				opts = {
-					file_types = { "markdown", "Avante" },
-				},
-				ft = { "markdown", "Avante" },
+				-- required for Windows users
+				use_absolute_path = true,
 			},
 		},
 	},
-	-- {'sindrets/diffview.nvim'},
+	{
+		-- Make sure to set this up properly if you have lazy=true
+		'MeanderingProgrammer/render-markdown.nvim',
+		opts = {
+			file_types = { "markdown", "Avante" },
+		},
+		ft = { "markdown", "Avante" },
+	},
+	{'sindrets/diffview.nvim'},
+	{'akinsho/git-conflict.nvim', version = "*", config = true},
 }
 
 require("lazy").setup({

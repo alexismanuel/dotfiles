@@ -1,0 +1,64 @@
+{
+	"$schema": "https://opencode.ai/config.json",
+	"share": "disabled",
+	"autoshare": false,
+	"autoupdate": true,
+	"provider": {
+		"openrouter": {
+			"options": {
+				"baseURL": "https://openrouter.ai/api/v1"
+			},
+			"models": {
+				"google/gemini-2.5-flash": {
+					"name": "Gemini 2.5 Flash"
+				}
+			}
+		}
+	},
+	"permission": {
+		"bash": {
+			"git commit": "ask"
+		}
+	},
+	"keybinds": {
+		"leader": "alt+\\",
+		"app_help": "<leader>h",
+		"switch_mode": "tab",
+
+		"editor_open": "<leader>e",
+
+		"session_new": "<leader>n",
+		"session_list": "<leader>l",
+		"session_share": "<leader>s",
+		"session_unshare": "<leader>u",
+		"session_interrupt": "esc",
+		"session_compact": "<leader>c",
+
+		"tool_details": "<leader>d",
+		"model_list": "<leader>m",
+		"theme_list": "<leader>t",
+		"project_init": "<leader>i",
+
+		"file_list": "<leader>f",
+		"file_close": "esc",
+		"file_diff_toggle": "<leader>v",
+
+		"input_clear": "ctrl+alt+c",
+		"input_paste": "<leader>p",
+		"input_submit": "enter",
+		"input_newline": "shift+enter,ctrl+j",
+
+		"messages_page_up": "pgup",
+		"messages_page_down": "pgdown",
+		"messages_half_page_up": "ctrl+alt+u",
+		"messages_half_page_down": "ctrl+alt+d",
+		"messages_previous": "<leader>up",
+		"messages_next": "<leader>down",
+		"messages_first": "ctrl+g",
+		"messages_last": "ctrl+alt+g",
+		"messages_layout_toggle": "ctal+alt+p",
+		"messages_copy": "<leader>y",
+		"messages_revert": "<leader>r",
+		"app_exit": "<leader>q"
+	}
+}

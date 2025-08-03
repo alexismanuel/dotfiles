@@ -2,9 +2,12 @@ alias dotfiles='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 alias cook='cookiecutter https://github.com/alexismanuel/forge.git --directory'
 alias dtf='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 alias vim='nvim'
-alias v='vim .'
+alias v='vim'
 alias drm='docker ps -qa | xargs -r docker rm -f'
 alias kubestart='minikube start --vm-driver=docker'
 alias prm="kubectl get pods -A -o jsonpath='{.items[*].metadata.name}' | xargs kubectl delete pod"
 alias ask="llm -m deepseek-r1:latest"
 alias uvt="uv tool"
+alias ls="eza"
+alias ll="ls -l"
+alias oc=opencode

@@ -12,13 +12,6 @@ local lsp_attach = function(client, bufnr)
 	vim.keymap.set("n", "gi", vim.lsp.buf.implementation, bufopts)
 
 end
-
 lsp_zero.extend_lspconfig({
-	sign_text = {
-		error = '✘',
-		warn = '▲',
-		hint = '⚑',
-		info = '»',
-	},
 	lsp_attach = lsp_attach
 })

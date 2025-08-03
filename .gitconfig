@@ -4,7 +4,7 @@
 	aap = add . -p
 	cm = commit -m
 	cma = commit --amend --no-edit
-	pf = push --force-with-lease
+	pf = push --force
 	lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative --decorate=full -n 10
 	rst = reset HEAD^
 	wt = worktree
@@ -12,6 +12,7 @@
 	sort = committerdate
 [commit]
 	verbose = true
+	gpgsign = true
 [core]
 	pager = delta
 	excludeFiles = ~/.gitignore
@@ -44,3 +45,6 @@
 [user]
 	email = alexis.manuelpro@gmail.com
 	name = alexismanuel
+	signingkey = B3D1ED1BC7FB328B
+[includeIf "gitdir:~/workspace/continuity/"]
+	path = ~/workspace/continuity/.gitconfig
