@@ -12,7 +12,7 @@
 	sort = committerdate
 [commit]
 	verbose = true
-	gpgsign = true
+	gpgSign = true
 [core]
 	pager = delta
 	excludeFiles = ~/.gitignore
@@ -45,6 +45,9 @@
 [user]
 	email = alexis.manuelpro@gmail.com
 	name = alexismanuel
-	signingkey = B3D1ED1BC7FB328B
+	signingkey = 01726D585F3B868E
 [includeIf "gitdir:~/workspace/continuity/"]
 	path = ~/workspace/continuity/.gitconfig
+	signingkey = B3D1ED1BC7FB328B
+[gpg]
+	program = /opt/homebrew/bin/gpg
