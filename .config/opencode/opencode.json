@@ -3,27 +3,41 @@
 	"share": "disabled",
 	"autoshare": false,
 	"autoupdate": true,
+	"small_model": "openrouter/z-ai/glm-4.6",
 	"provider": {
 		"openrouter": {
 			"options": {
 				"baseURL": "https://openrouter.ai/api/v1"
 			},
 			"models": {
+				"minimax/minimax-m2": {
+					"name": "MiniMax M2 Custom"
+				},
 				"google/gemini-2.5-flash": {
-					"name": "Gemini 2.5 Flash"
+					"name": "Gemini 2.5 Flash Custom"
+				},
+				"google/gemini-2.5-flash-lite": {
+					"name": "Gemini 2.5 Flash Lite Custom"
+				},
+				"x-ai/grok-4-fast": {
+					"name": "xAI: Grok 4 Fast Custom"
+				},
+				"deepseek/deepseek-v3.2": {
+					"name": "DeepSeek V3.2 Custom"
 				}
 			}
 		}
 	},
+	"plugin": ["opencode-skills"],
 	"permission": {
 		"bash": {
-			"git commit": "ask"
+			"git commit": "deny"
 		}
 	},
 	"keybinds": {
-		"leader": "alt+\\",
-		"app_help": "<leader>h",
-		"switch_mode": "tab",
+		"leader": "alt+\\\\",
+		"agent_cycle": "tab",
+		"app_exit": "ctrl+q",
 
 		"editor_open": "<leader>e",
 
@@ -34,14 +48,8 @@
 		"session_interrupt": "esc",
 		"session_compact": "<leader>c",
 
-		"tool_details": "<leader>d",
 		"model_list": "<leader>m",
 		"theme_list": "<leader>t",
-		"project_init": "<leader>i",
-
-		"file_list": "<leader>f",
-		"file_close": "esc",
-		"file_diff_toggle": "<leader>v",
 
 		"input_clear": "ctrl+alt+c",
 		"input_paste": "<leader>p",
@@ -52,13 +60,19 @@
 		"messages_page_down": "pgdown",
 		"messages_half_page_up": "ctrl+alt+u",
 		"messages_half_page_down": "ctrl+alt+d",
-		"messages_previous": "<leader>up",
-		"messages_next": "<leader>down",
 		"messages_first": "ctrl+g",
 		"messages_last": "ctrl+alt+g",
-		"messages_layout_toggle": "ctal+alt+p",
 		"messages_copy": "<leader>y",
-		"messages_revert": "<leader>r",
-		"app_exit": "<leader>q"
+
+		"session_export": "<leader>x",
+		"session_child_cycle": "ctrl+alt+right",
+		"session_child_cycle_reverse": "ctrl+alt+left",
+		"messages_undo": "<leader>u",
+		"messages_redo": "<leader>r",
+		"model_cycle_recent": "f2",
+		"model_cycle_recent_reverse": "shift+f2",
+		"agent_list": "<leader>a",
+		"agent_cycle": "tab",
+		"agent_cycle_reverse": "shift+tab"
 	}
 }
