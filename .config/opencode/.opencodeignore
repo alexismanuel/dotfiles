@@ -1,0 +1,7 @@
+# make sure these are properly excluded from AI assistants
+.env*
+*.tfvars
+1password-credentials.json
+*.pem
+secrets/*
+*.credentials.yaml
