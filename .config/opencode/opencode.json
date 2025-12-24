@@ -10,25 +10,12 @@
 				"baseURL": "https://openrouter.ai/api/v1"
 			},
 			"models": {
-				"minimax/minimax-m2": {
-					"name": "MiniMax M2 Custom"
-				},
-				"google/gemini-2.5-flash": {
-					"name": "Gemini 2.5 Flash Custom"
-				},
-				"google/gemini-2.5-flash-lite": {
-					"name": "Gemini 2.5 Flash Lite Custom"
-				},
-				"x-ai/grok-4-fast": {
-					"name": "xAI: Grok 4 Fast Custom"
-				},
 				"deepseek/deepseek-v3.2": {
 					"name": "DeepSeek V3.2 Custom"
 				}
 			}
 		}
 	},
-	"plugin": ["opencode-skills"],
 	"permission": {
 		"bash": {
 			"git commit": "deny"
