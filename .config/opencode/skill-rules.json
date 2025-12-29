@@ -1,0 +1,219 @@
+{
+  "version": "1.0",
+  "description": "Skill activation triggers for OpenCode. Controls when skills automatically suggest activation.",
+  "skills": {
+    "git-commit-helper": {
+      "type": "domain",
+      "enforcement": "suggest",
+      "priority": "high",
+      "description": "Generate descriptive commit messages by analyzing git diffs",
+      "promptTriggers": {
+        "keywords": [
+          "commit",
+          "git commit",
+          "commit message",
+          "staged changes",
+          "git diff"
+        ],
+        "intentPatterns": [
+          "(create|write|generate|help).*?commit",
+          "commit.*?(message|description)",
+          "(review|analyze).*?(staged|changes|diff)"
+        ]
+      }
+    },
+    "mr-generator": {
+      "type": "domain",
+      "enforcement": "suggest",
+      "priority": "high",
+      "description": "Generates intelligent GitLab merge request descriptions",
+      "promptTriggers": {
+        "keywords": [
+          "merge request",
+          "MR",
+          "pull request",
+          "PR",
+          "gitlab"
+        ],
+        "intentPatterns": [
+          "(create|generate|write).*?(merge request|MR|pull request|PR)",
+          "(MR|PR).*?(description|summary)"
+        ]
+      }
+    },
+    "jira-ticket-creator": {
+      "type": "domain",
+      "enforcement": "suggest",
+      "priority": "high",
+      "description": "Create Jira tickets for the RD project",
+      "promptTriggers": {
+        "keywords": [
+          "jira",
+          "ticket",
+          "create ticket",
+          "new ticket",
+          "bug ticket",
+          "feature ticket"
+        ],
+        "intentPatterns": [
+          "(create|make|open|file).*?(jira|ticket|issue)",
+          "jira.*?(ticket|issue|bug|feature)"
+        ]
+      }
+    },
+    "jira-ticket-fetcher": {
+      "type": "domain",
+      "enforcement": "suggest",
+      "priority": "medium",
+      "description": "Fetch Jira ticket content by ID or search",
+      "promptTriggers": {
+        "keywords": [
+          "fetch ticket",
+          "get ticket",
+          "find ticket",
+          "RD-"
+        ],
+        "intentPatterns": [
+          "(fetch|get|find|show|look up).*?(jira|ticket)",
+          "RD-\\d+",
+          "ticket.*?(details|info|status)"
+        ]
+      }
+    },
+    "duckdb-data-explorer": {
+      "type": "domain",
+      "enforcement": "suggest",
+      "priority": "high",
+      "description": "Local data exploration and analysis using DuckDB",
+      "promptTriggers": {
+        "keywords": [
+          "duckdb",
+          "data analysis",
+          "csv",
+          "parquet",
+          "data exploration",
+          "analyze data",
+          "query data"
+        ],
+        "intentPatterns": [
+          "(analyze|explore|query|read).*?(data|csv|parquet|json)",
+          "data.*?(analysis|exploration|profiling)",
+          "(load|import|read).*?(file|dataset)"
+        ]
+      },
+      "fileTriggers": {
+        "pathPatterns": [
+          "**/*.csv",
+          "**/*.parquet",
+          "**/*.json"
+        ]
+      }
+    },
+    "mcp-builder": {
+      "type": "domain",
+      "enforcement": "suggest",
+      "priority": "high",
+      "description": "Guide for creating MCP servers",
+      "promptTriggers": {
+        "keywords": [
+          "mcp",
+          "mcp server",
+          "model context protocol",
+          "fastmcp"
+        ],
+        "intentPatterns": [
+          "(create|build|implement).*?mcp",
+          "mcp.*?(server|tool|integration)"
+        ]
+      }
+    },
+    "skill-creator": {
+      "type": "domain",
+      "enforcement": "suggest",
+      "priority": "high",
+      "description": "Guide for creating effective skills",
+      "promptTriggers": {
+        "keywords": [
+          "create skill",
+          "new skill",
+          "skill creation",
+          "write skill",
+          "SKILL.md"
+        ],
+        "intentPatterns": [
+          "(create|write|make|build).*?skill",
+          "skill.*?(template|guide|creation)"
+        ]
+      }
+    },
+    "mr-tracker": {
+      "type": "domain",
+      "enforcement": "suggest",
+      "priority": "high",
+      "description": "Tracks and monitors GitLab merge request activity including comments, status, and real-time updates",
+      "promptTriggers": {
+        "keywords": [
+          "MR comments",
+          "merge request comments",
+          "watch MR",
+          "MR status",
+          "MR activity",
+          "track MR",
+          "monitor MR"
+        ],
+        "intentPatterns": [
+          "(watch|monitor|track).*?(MR|merge request)",
+          "(MR|merge request).*?(comments|activity|status)",
+          "(show|get|fetch).*?(MR|merge request).*?comments"
+        ]
+      }
+    },
+    "artifacts-builder": {
+      "type": "domain",
+      "enforcement": "suggest",
+      "priority": "high",
+      "description": "Suite of tools for creating elaborate, multi-component HTML artifacts using React, Tailwind CSS, shadcn/ui",
+      "promptTriggers": {
+        "keywords": [
+          "artifact",
+          "HTML artifact",
+          "react artifact",
+          "shadcn",
+          "bundle HTML",
+          "single file HTML",
+          "frontend artifact"
+        ],
+        "intentPatterns": [
+          "(create|build|make).*?artifact",
+          "artifact.*?(react|HTML|bundle)",
+          "(bundle|package).*?(HTML|frontend)"
+        ]
+      },
+      "fileTriggers": {
+        "pathPatterns": [
+          "**/bundle.html",
+          "**/init-artifact.sh",
+          "**/bundle-artifact.sh"
+        ]
+      }
+    }
+  },
+  "settings": {
+    "enableFileTriggers": true,
+    "showMatchDetails": true,
+    "maxSkillsToSuggest": 3
+  },
+  "notes": {
+    "enforcement_types": {
+      "suggest": "Skill suggestion appears but doesn't block execution",
+      "block": "Requires skill to be used before proceeding (guardrail)",
+      "warn": "Shows warning but allows proceeding"
+    },
+    "priority_levels": {
+      "critical": "Highest - Always trigger when matched",
+      "high": "Important - Trigger for most matches",
+      "medium": "Moderate - Trigger for clear matches",
+      "low": "Optional - Trigger only for explicit matches"
+    }
+  }
+}
