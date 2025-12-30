@@ -196,6 +196,62 @@
           "**/bundle-artifact.sh"
         ]
       }
+    },
+    "codemap-generator": {
+      "type": "domain",
+      "enforcement": "suggest",
+      "priority": "high",
+      "description": "Generate hierarchical code maps from any codebase for AI agent consumption",
+      "promptTriggers": {
+        "keywords": [
+          "codemap",
+          "code map",
+          "codebase structure",
+          "codebase analysis",
+          "dependency map",
+          "class hierarchy",
+          "call graph",
+          "project structure",
+          "architecture map"
+        ],
+        "intentPatterns": [
+          "(generate|create|build).*?(codemap|code map)",
+          "(analyze|understand|map).*?(codebase|project|architecture)",
+          "(dependency|class|call).*?(map|graph|hierarchy)",
+          "(onboard|explore).*?(codebase|project)"
+        ]
+      },
+      "fileTriggers": {
+        "pathPatterns": [
+          "**/CODEMAP.md",
+          "**/codemap.py"
+        ]
+      }
+    },
+    "dagster-local": {
+      "type": "domain",
+      "enforcement": "suggest",
+      "priority": "high",
+      "description": "Interact with Dagster data orchestration platform running locally or on Kubernetes",
+      "promptTriggers": {
+        "keywords": [
+          "dagster",
+          "dagster run",
+          "dagster job",
+          "dagster asset",
+          "materialize asset",
+          "pipeline run",
+          "dagster logs",
+          "run logs"
+        ],
+        "intentPatterns": [
+          "(list|get|show|check).*?(dagster|run|asset|job)",
+          "(launch|start|trigger).*?(job|run|pipeline|asset)",
+          "(materialize|refresh).*?asset",
+          "dagster.*?(status|logs|failure|error)",
+          "(debug|troubleshoot).*?(run|pipeline|dagster)"
+        ]
+      }
     }
   },
   "settings": {
