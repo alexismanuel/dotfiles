@@ -159,9 +159,15 @@ export const openNotify = async ({ project, client, $, directory, worktree }) =>
 
       // Session completed - only use session.idle to avoid duplicate notifications
       if (event.type === 'session.idle') {
+        // Skip subagent completions
+        if (event.properties.isSubagent || event.properties.parentSessionID) {
+          return
+        }
+
         const sessionId = event.properties.sessionID
         const pending = db.pending[sessionId]
 
+        // Only notify for sessions we started tracking via chat.message
         if (pending) {
           const duration = formatDuration(Date.now() - pending.started_at)
           const projectName = getProjectName(pending.directory)
@@ -175,7 +181,6 @@ export const openNotify = async ({ project, client, $, directory, worktree }) =>
           // Clear pending state for this session
           delete db.pending[sessionId]
           saveDB(configDir, db)
-
         }
       }
 

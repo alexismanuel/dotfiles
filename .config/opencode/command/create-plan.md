@@ -1,13 +1,17 @@
-
 ---
 description: Generate a detailed implementation plan from an existing PRD and codebase research.
--
 ---
 
 # Create Implementation Plan
 
-You are tasked with generating a detailed implementation plan from an existing Product Requirements Document (PRD) and codebase research document. The plan synthesizes the "what" from the PRD with the "how" from research, creating actionable tasks, phases, and
-dependencies for development.
+You are tasked with generating a detailed implementation plan from an existing Product Requirements Document (PRD) and codebase research document. The plan synthesizes the "what" from the PRD with the "how" from research, creating actionable tasks, phases, and dependencies for development.
+
+**Core principles from writing-plans skill:**
+- Assume the implementer has **zero context** for the codebase
+- Document everything: which files to touch, exact code, how to test
+- **Bite-sized tasks** (2-5 minutes each)
+- **TDD approach**: Write failing test → Run → Implement → Verify → Commit
+- DRY, YAGNI, frequent commits
 
 ## Initial Setup
 
@@ -81,49 +85,85 @@ If no arguments are parsed, try to look for `./research.md` file and `./plan.md`
 
    # Implementation Plan: [Feature Name]
 
+   > **For execution:** Use `/implement-plan` to execute this plan task-by-task with batch checkpoints.
+
+   **Goal:** [One sentence describing what this builds]
+
+   **Architecture:** [2-3 sentences about approach]
+
+   **Tech Stack:** [Key technologies/libraries]
+
+   ---
+
    **Date**: [ISO datetime]
    **Planner**: opencode
    **Git Commit**: [hash]
    **Branch**: [name]
-   **Repository**: [name]
    **PRD Source**: [prd_file]
    **Research Source**: [research_file]
 
    ## Overview
-   [Brief synthesis: Problem from PRD + key research insights. State high-level phases.]
+   [Brief synthesis: Problem from PRD + key research insights.]
 
    ## Goals (from PRD)
    [List measurable objectives from PRD.]
 
-   ## Phased Task Breakdown
-   Use todo-style items with priorities (high/medium/low) and estimated effort.
+   ## Task Breakdown
 
-   ### Phase 1: Setup/Planning
-   - Task 1: [Actionable step, e.g., "Update existing auth module based on research findings in auth.ts:45"] (priority: high, est: 2h)
-   - [Reference code: file.py:line from research]
+   ### Task 1: [Component Name]
 
-   ### Phase 2: Core Implementation
-   - [Map to PRD Functional Requirements, backed by research e.g., "Implement user story X using pattern from research Area 1"]
+   **Files:**
+   - Create: `exact/path/to/file.py`
+   - Modify: `exact/path/to/existing.py:123-145`
+   - Test: `tests/exact/path/to/test.py`
 
-   ### Phase 3: Testing & Integration
-   - [Tasks for verification, e.g., "Add tests per success metrics; run npm test"]
+   **Step 1: Write the failing test**
 
-   ### Phase 4: Deployment/Polish
-   - [Edge cases, non-goals handling]
+   ```python
+   def test_specific_behavior():
+       result = function(input)
+       assert result == expected
+   ```
+
+   **Step 2: Run test to verify it fails**
+
+   Run: `pytest tests/path/test.py::test_name -v`
+   Expected: FAIL with "function not defined"
+
+   **Step 3: Write minimal implementation**
+
+   ```python
+   def function(input):
+       return expected
+   ```
+
+   **Step 4: Run test to verify it passes**
+
+   Run: `pytest tests/path/test.py::test_name -v`
+   Expected: PASS
+
+   **Step 5: Commit**
+
+   ```bash
+   git add tests/path/test.py src/path/file.py
+   git commit -m "feat: add specific feature"
+   ```
+
+   ### Task 2: [Next Component]
+   [Same structure: Files, Step 1-5]
+
+   ...
 
    ## Dependencies & Risks
    - Dependencies: [e.g., "Requires Auth module from research Component 1"]
-   - Risks: [From research insights + PRD non-goals, e.g., "Potential perf issue in large datasets; mitigate with memoization"]
+   - Risks: [From research insights + PRD non-goals]
 
    ## Code References (from Research)
    - `path/to/file.py:123` - [Brief desc + relevance to plan]
    - [List 5-10 key ones]
 
-   ## Architecture & Patterns
-   [Synthesize insights: How plan fits existing codebase, e.g., "Follow MVC pattern from research."]
-
    ## Success Metrics (from PRD)
-   [Restate + verification steps, e.g., "Run tests; measure engagement."]
+   [Restate + verification steps]
 
    ## Open Questions
    [Any gaps; suggest follow-ups.]
@@ -140,12 +180,36 @@ If no arguments are parsed, try to look for `./research.md` file and `./plan.md`
 • Update frontmatter: last_updated, last_updated_by, add last_updated_note: "Addressed [description]".
 • Re-run steps 3-4 for new info; spawn sub-agents as needed.
 
+## Task Granularity
+
+**Each step is ONE action (2-5 minutes):**
+- "Write the failing test" - step
+- "Run it to make sure it fails" - step
+- "Implement the minimal code to make the test pass" - step
+- "Run the tests and make sure they pass" - step
+- "Commit" - step
+
+**Task requirements:**
+- Exact file paths always (`src/auth/login.ts:45-67`)
+- Complete code in plan (not "add validation")
+- Exact commands with expected output
+- Reference relevant code from research
+
 ## Important Notes
 
-• Parallelism: Read files and sub-agents in parallel for efficiency.
-• Read-Only: No code changes; focus on planning.
-• Conventions: Mimic codebase style from research. Follow security (no secrets).
-• Junior-Dev Focus: Tasks explicit, with file refs for navigation.
-• Edge Cases: If no feature_name, infer from PRD title (e.g., slugify "User Login" → "user-login").
-• Tools: Use todowrite for internal tracking; Bash for git metadata.
+- Parallelism: Read files and sub-agents in parallel for efficiency.
+- Read-Only: No code changes; focus on planning.
+- Conventions: Mimic codebase style from research. Follow security (no secrets).
+- Junior-Dev Focus: Tasks explicit, with file refs for navigation. Assume zero codebase context.
+- Edge Cases: If no feature_name, infer from PRD title (e.g., slugify "User Login" → "user-login").
+- Tools: Use todowrite for internal tracking; Bash for git metadata.
+- TDD: Every task follows Write Test → Fail → Implement → Pass → Commit cycle.
 
+## Execution Handoff
+
+After saving the plan, offer:
+
+**"Plan complete and saved to `plan.md`. Ready to implement?"**
+
+- Use `/implement-plan` to execute with batch checkpoints
+- Or implement manually following the step-by-step tasks

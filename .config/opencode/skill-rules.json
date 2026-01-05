@@ -1,7 +1,97 @@
 {
-  "version": "1.0",
-  "description": "Skill activation triggers for OpenCode. Controls when skills automatically suggest activation.",
+  "version": "1.1",
+  "description": "Skill activation triggers for OpenCode. Controls when skills automatically suggest activation. Includes process skills (brainstorming, debugging, verification) that should trigger BEFORE domain skills.",
   "skills": {
+    "verification-before-completion": {
+      "type": "process",
+      "enforcement": "critical",
+      "priority": "critical",
+      "description": "Evidence before claims - no completion without fresh verification",
+      "promptTriggers": {
+        "keywords": [
+          "done",
+          "complete",
+          "finished",
+          "fixed",
+          "works now",
+          "passes now",
+          "all tests pass",
+          "ready to merge",
+          "ready for review",
+          "ship it",
+          "LGTM"
+        ],
+        "intentPatterns": [
+          "(it|that|this|everything).*?(works|passes|fixed|complete)",
+          "(all|tests?).*?(pass|green|passing)",
+          "(ready|done|complete|finished)",
+          "(bug|issue|problem).*?(fixed|resolved|solved)",
+          "should.*?(work|pass|be fixed)",
+          "(create|open|submit).*?(PR|MR|pull request|merge request)"
+        ]
+      }
+    },
+    "systematic-debugging": {
+      "type": "process",
+      "enforcement": "critical",
+      "priority": "critical",
+      "description": "Root cause investigation before fixes - no guessing",
+      "promptTriggers": {
+        "keywords": [
+          "bug",
+          "error",
+          "failed",
+          "failing",
+          "broken",
+          "not working",
+          "doesn't work",
+          "crash",
+          "exception",
+          "issue",
+          "problem",
+          "debug",
+          "fix"
+        ],
+        "intentPatterns": [
+          "(fix|debug|solve|resolve).*?(bug|error|issue|problem)",
+          "(test|build|compile).*?(fail|error|broken)",
+          "(why|what).*?(not working|failing|broken|error)",
+          "getting.*?(error|exception|crash)",
+          "(unexpected|wrong).*?(behavior|result|output)",
+          "investigate.*?(issue|problem|bug)",
+          "troubleshoot"
+        ]
+      }
+    },
+    "brainstorming": {
+      "type": "process",
+      "enforcement": "suggest",
+      "priority": "high",
+      "description": "Explore requirements and design before implementation",
+      "promptTriggers": {
+        "keywords": [
+          "brainstorm",
+          "add feature",
+          "new feature",
+          "implement",
+          "build",
+          "create",
+          "design",
+          "architecture",
+          "how should",
+          "best way to",
+          "approach"
+        ],
+        "intentPatterns": [
+          "(add|create|build|implement|design).*?(feature|component|module|system)",
+          "(want|need|would like).*?(to add|to build|to create|to implement)",
+          "how.*?(should|would|could).*?(implement|build|design|approach)",
+          "(best|good|right).*?(way|approach|pattern).*?(to|for)",
+          "(new|add).*?(functionality|capability|feature)",
+          "let'?s.*?(build|create|add|implement)"
+        ]
+      }
+    },
     "git-commit-helper": {
       "type": "domain",
       "enforcement": "suggest",
@@ -252,6 +342,130 @@
           "(debug|troubleshoot).*?(run|pipeline|dagster)"
         ]
       }
+    },
+    "docker-agents": {
+      "type": "domain",
+      "enforcement": "suggest",
+      "priority": "high",
+      "description": "Spawn and manage sandboxed OpenCode coding agents in Docker containers",
+      "promptTriggers": {
+        "keywords": [
+          "spawn agent",
+          "docker agent",
+          "coding agent",
+          "agent container",
+          "sandbox agent",
+          "parallel agents",
+          "multi-agent",
+          "agent orchestration",
+          "isolated worker",
+          "opencode container"
+        ],
+        "intentPatterns": [
+          "(spawn|create|start|launch).*?agent",
+          "(docker|container).*?(agent|worker)",
+          "(orchestrate|parallelize|delegate).*?(agent|task|worker)",
+          "(sandbox|isolate).*?(code|execution|agent)",
+          "multi.*?agent.*?(workflow|task)",
+          "(manage|terminate|cleanup).*?agent"
+        ]
+      }
+    },
+    "python-testing-guidelines": {
+      "type": "process",
+      "enforcement": "critical",
+      "priority": "critical",
+      "description": "Enforces dummy-class pattern over unittest.mock when writing or reviewing Python tests",
+      "promptTriggers": {
+        "keywords": [
+          "test",
+          "tests",
+          "pytest",
+          "unittest",
+          "mock",
+          "fixture",
+          "test case",
+          "test file",
+          "write test",
+          "add test",
+          "test coverage"
+        ],
+        "intentPatterns": [
+          "(write|add|create|implement).*?(test|tests)",
+          "(test|tests).*?(for|coverage)",
+          "pytest.*?(fixture|test|run)",
+          "(mock|patch|MagicMock|AsyncMock)",
+          "(unit|integration).*?test",
+          "test_.*?\\.py",
+          "tests/.*",
+          "(review|check).*?test"
+        ]
+      },
+      "fileTriggers": {
+        "pathPatterns": [
+          "**/test_*.py",
+          "**/tests/**/*.py",
+          "**/tests/fixtures.py"
+        ]
+      }
+    },
+    "pyenv-activation": {
+      "type": "domain",
+      "enforcement": "suggest",
+      "priority": "medium",
+      "description": "Guide for activating pyenv virtual environments with troubleshooting for common issues",
+      "promptTriggers": {
+        "keywords": [
+          "pyenv",
+          "pyenv activate",
+          "virtualenv",
+          "python environment",
+          "activate environment",
+          "pyenv-virtualenv"
+        ],
+        "intentPatterns": [
+          "(activate|use|switch).*?(pyenv|virtualenv|environment)",
+          "pyenv.*?(activate|init|shell)",
+          "(python|pip).*?(version|environment)",
+          "virtualenv.*?(activate|create|load)"
+        ]
+      }
+    },
+    "opencode-plugin-builder": {
+      "type": "domain",
+      "enforcement": "suggest",
+      "priority": "high",
+      "description": "Guide for creating, modifying, or debugging OpenCode plugins with hooks, events, and SDK methods",
+      "promptTriggers": {
+        "keywords": [
+          "plugin",
+          "opencode plugin",
+          "create plugin",
+          "write plugin",
+          "plugin hook",
+          "plugin event",
+          "tool.execute",
+          "chat.message",
+          "session.created",
+          "session.idle"
+        ],
+        "intentPatterns": [
+          "(create|write|build|make).*?plugin",
+          "plugin.*?(hook|event|tool)",
+          "(extend|customize).*?opencode",
+          "(intercept|modify).*?(message|tool|session)",
+          "client\\.session",
+          "event\\.type",
+          "@opencode-ai/(plugin|sdk)"
+        ]
+      },
+      "fileTriggers": {
+        "pathPatterns": [
+          "**/plugin/*.js",
+          "**/plugin/*.ts",
+          "**/.opencode/plugin/*"
+        ]
+      }
     }
   },
   "settings": {
@@ -263,13 +477,19 @@
     "enforcement_types": {
       "suggest": "Skill suggestion appears but doesn't block execution",
       "block": "Requires skill to be used before proceeding (guardrail)",
-      "warn": "Shows warning but allows proceeding"
+      "warn": "Shows warning but allows proceeding",
+      "critical": "MUST be used - process skills that enforce discipline"
     },
     "priority_levels": {
-      "critical": "Highest - Always trigger when matched",
-      "high": "Important - Trigger for most matches",
+      "critical": "Highest - Always trigger when matched (process skills)",
+      "high": "Important - Trigger for most matches (domain skills)",
       "medium": "Moderate - Trigger for clear matches",
       "low": "Optional - Trigger only for explicit matches"
-    }
+    },
+    "skill_types": {
+      "process": "Cross-cutting behavioral discipline skills (debugging, verification, brainstorming). These should trigger BEFORE domain skills and establish HOW to approach work.",
+      "domain": "Task-specific implementation skills (mcp-builder, jira-creator, etc.). These provide specialized knowledge for specific domains."
+    },
+    "skill_priority_order": "When multiple skills match: 1) Process skills first (HOW to approach), 2) Domain skills second (WHAT to build)"
   }
 }

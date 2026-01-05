@@ -8,26 +8,52 @@ agent: product-manager
 
 You are tasked to create a detailed Product Requirements Document (PRD) in Markdown format, based on an initial user prompt. The PRD should be clear, actionable, and suitable for a junior developer to understand and implement the feature.
 
+**Related skill:** This command incorporates principles from the `brainstorming` skill. For pure design exploration without PRD output, use that skill directly.
+
 ## Process
 
-1.  **Receive Initial Prompt:** The user provides a brief description or request for a new feature or functionality.
-2.  **Ask Clarifying Questions:** Before writing the PRD, you *must* ask clarifying questions to gather sufficient detail. The goal is to understand the "what" and "why" of the feature, not necessarily the "how" (which the developer will figure out). Make sure to provide options in letter/number lists so I can respond easily with my selections.
-3.  **Generate PRD:** Based on the initial prompt and the user's answers to the clarifying questions, generate a PRD using the structure outlined below.
-4.  **Save PRD:** Save the generated document as `prd.md`. 
+1.  **Check Project Context First:** Before asking questions, review relevant files, docs, and recent commits to understand the current state.
+
+2.  **Receive Initial Prompt:** The user provides a brief description or request for a new feature or functionality.
+
+3.  **Ask Clarifying Questions (ONE AT A TIME):**
+    - Ask questions **one at a time** - do not overwhelm with multiple questions
+    - **Prefer multiple choice** when possible (easier to answer)
+    - Open-ended questions are fine when choices aren't clear
+    - Goal: understand the "what" and "why", not the "how"
+    - Make sure to provide options in letter/number lists so the user can respond easily
+
+4.  **Explore Approaches (2-3 options):**
+    - Before finalizing requirements, propose 2-3 different approaches
+    - Present with trade-offs and your recommendation
+    - Get explicit agreement on approach before writing final PRD
+
+5.  **Present PRD Incrementally:**
+    - Present the PRD in sections (200-300 words each)
+    - Check after each major section: "Does this look right so far?"
+    - Be ready to revise based on feedback
+
+6.  **Save PRD:** Save the finalized document as `prd.md`. 
 
 ## Clarifying Questions (Examples)
 
-You should adapt yours questions based on the prompt, but here are some common areas to explore:
+Adapt questions based on the prompt. **Ask ONE question at a time.** Common areas to explore:
 
-*   **Problem/Goal:** "What problem does this feature solve for the user?" or "What is the main goal we want to achieve with this feature?"
-*   **Target User:** "Who is the primary user of this feature?"
-*   **Core Functionality:** "Can you describe the key actions a user should be able to perform with this feature?"
-*   **User Stories:** "Could you provide a few user stories? (e.g., As a [type of user], I want to [perform an action] so that [benefit].)"
-*   **Acceptance Criteria:** "How will we know when this feature is successfully implemented? What are the key success criteria?"
-*   **Scope/Boundaries:** "Are there any specific things this feature *should not* do (non-goals)?"
-*   **Data Requirements:** "What kind of data does this feature need to display or manipulate?"
-*   **Design/UI:** "Are there any existing design mockups or UI guidelines to follow?" or "Can you describe the desired look and feel?"
-*   **Edge Cases:** "Are there any potential edge cases or error conditions we should consider?"
+*   **Problem/Goal:** "What problem does this feature solve? a) Users can't do X, b) System is slow at Y, c) Something else?"
+*   **Target User:** "Who is the primary user? a) End users, b) Admins, c) Both, d) Other?"
+*   **Core Functionality:** "What's the key action a user should perform?"
+*   **User Stories:** "Can you describe a typical usage scenario?"
+*   **Acceptance Criteria:** "How will we know it's done? What's the minimum viable version?"
+*   **Scope/Boundaries:** "What should this feature NOT do? (non-goals)"
+*   **Data Requirements:** "What data does this feature need?"
+*   **Design/UI:** "Any existing mockups or UI patterns to follow?"
+*   **Edge Cases:** "Any error conditions to consider?"
+
+**Question discipline:**
+- One question per message
+- If a topic needs more exploration, break into multiple questions
+- Prefer multiple choice (a/b/c) when possible
+- Open-ended when choices aren't clear
 
 ## PRD Structure
 
@@ -52,8 +78,27 @@ Assume the primary reader of the PRD is a **junior developer**. Therefore, requi
 *   **Format:** Markdown (`.md`)
 *   **Filename:** `prd.md`
 
-## Final instructions
+## Key Principles
+
+| Principle | Description |
+|-----------|-------------|
+| **One question at a time** | Don't overwhelm with multiple questions |
+| **Multiple choice preferred** | Easier to answer than open-ended |
+| **YAGNI ruthlessly** | Remove unnecessary features from requirements |
+| **Explore alternatives** | Propose 2-3 approaches before settling |
+| **Incremental validation** | Present PRD in sections, validate each |
+
+## Final Instructions
 
 1. Do NOT start implementing the PRD
-2. Make sure to ask the user clarifying questions
-3. Take the user's answers to the clarifying questions and improve the PRD
+2. Check project context BEFORE asking questions
+3. Ask clarifying questions ONE AT A TIME
+4. Propose 2-3 approaches with trade-offs before finalizing
+5. Present PRD incrementally, checking after each section
+6. Take user feedback and improve the PRD
+
+## Next Steps
+
+After PRD is complete, suggest:
+- `/research-codebase` - to understand implementation context
+- `/create-plan` - to create detailed implementation tasks

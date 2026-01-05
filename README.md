@@ -14,6 +14,8 @@ my dotfiles
 - [starship](https://github.com/starship/starship?tab=readme-ov-file#-installation)
 - [fastfetch](https://github.com/fastfetch-cli/fastfetch?tab=readme-ov-file#installation)
 - [rustup](https://rustup.rs/)
+- osascript
+- ignore
 
 
 ## Install

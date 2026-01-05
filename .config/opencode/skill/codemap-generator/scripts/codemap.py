@@ -32,13 +32,15 @@ from pathlib import Path
 from typing import Optional
 
 # Suppress tree-sitter deprecation warnings
-warnings.filterwarnings('ignore', category=FutureWarning, module='tree_sitter')
+warnings.filterwarnings("ignore", category=FutureWarning, module="tree_sitter")
 
 try:
     import tree_sitter_languages as tsl
 except ImportError:
     print("Error: tree-sitter-languages not installed.")
-    print("Run: uv pip install tree-sitter==0.21.3 tree-sitter-languages gitignore-parser")
+    print(
+        "Run: uv pip install tree-sitter==0.21.3 tree-sitter-languages gitignore-parser"
+    )
     sys.exit(1)
 
 try:
@@ -51,9 +53,11 @@ except ImportError:
 # Configuration
 # =============================================================================
 
+
 @dataclass
 class Config:
     """Configuration for codemap generation."""
+
     root_dir: Path = field(default_factory=Path.cwd)
     granularity: str = "detailed"  # "file" or "detailed"
     max_depth: int = 10
@@ -61,13 +65,38 @@ class Config:
     include_docstrings: bool = True
     include_signatures: bool = True
     output_file: Optional[Path] = None
-    exclude_patterns: list = field(default_factory=lambda: [
-        "__pycache__", "node_modules", ".git", ".svn", ".hg",
-        "venv", ".venv", "env", ".env", "dist", "build",
-        ".idea", ".vscode", "*.pyc", "*.pyo", "*.so", "*.dll",
-        ".tox", ".pytest_cache", ".mypy_cache", "*.egg-info",
-        "vendor", "target", "bin", "obj"
-    ])
+    exclude_patterns: list = field(
+        default_factory=lambda: [
+            "__pycache__",
+            "node_modules",
+            ".git",
+            ".svn",
+            ".hg",
+            "venv",
+            ".venv",
+            "env",
+            ".env",
+            "dist",
+            "build",
+            ".idea",
+            ".vscode",
+            "*.pyc",
+            "*.pyo",
+            "*.so",
+            "*.dll",
+            ".tox",
+            ".pytest_cache",
+            ".mypy_cache",
+            "*.egg-info",
+            "vendor",
+            "target",
+            "bin",
+            "obj",
+        ]
+    )
+    contextualized: bool = (
+        False  # Include scope chain, siblings, and used imports in output
+    )
 
 
 # =============================================================================
@@ -421,9 +450,21 @@ DEFAULT_QUERIES = {
 # Data Structures
 # =============================================================================
 
+
+@dataclass
+class SiblingInfo:
+    """Represents a sibling entity (before/after in source order)."""
+
+    name: str
+    entity_type: str  # "function", "class", "method"
+    position: str  # "before" or "after"
+    signature: str = ""
+
+
 @dataclass
 class Import:
     """Represents an import statement."""
+
     raw: str
     module: str
     names: list[str] = field(default_factory=list)
@@ -433,6 +474,7 @@ class Import:
 @dataclass
 class Function:
     """Represents a function or method."""
+
     name: str
     params: str = ""
     return_type: str = ""
@@ -442,11 +484,19 @@ class Function:
     calls: list[str] = field(default_factory=list)
     is_method: bool = False
     is_private: bool = False
+    scope_chain: list[str] = field(
+        default_factory=list
+    )  # e.g., ["ModuleName", "ClassName"]
+    used_imports: list[str] = field(
+        default_factory=list
+    )  # imports referenced in this function
+    siblings: list[SiblingInfo] = field(default_factory=list)  # nearby entities
 
 
 @dataclass
 class Class:
     """Represents a class or struct."""
+
     name: str
     bases: list[str] = field(default_factory=list)
     docstring: str = ""
@@ -454,11 +504,19 @@ class Class:
     end_line: int = 0
     methods: list[Function] = field(default_factory=list)
     is_private: bool = False
+    scope_chain: list[str] = field(
+        default_factory=list
+    )  # e.g., ["ModuleName"] for nested classes
+    used_imports: list[str] = field(
+        default_factory=list
+    )  # imports referenced in class body
+    siblings: list[SiblingInfo] = field(default_factory=list)  # nearby entities
 
 
 @dataclass
 class FileInfo:
     """Represents a parsed source file."""
+
     path: Path
     relative_path: Path
     language: str
@@ -471,6 +529,7 @@ class FileInfo:
 # =============================================================================
 # File Discovery
 # =============================================================================
+
 
 def should_ignore(path: Path, config: Config, gitignore_matcher=None) -> bool:
     """Check if a path should be ignored."""
@@ -514,15 +573,19 @@ def discover_files(config: Config) -> list[Path]:
 
         # Filter directories
         dirs[:] = [
-            d for d in dirs
-            if not d.startswith(".") and not should_ignore(root_path / d, config, gitignore_matcher)
+            d
+            for d in dirs
+            if not d.startswith(".")
+            and not should_ignore(root_path / d, config, gitignore_matcher)
         ]
 
         for filename in filenames:
             file_path = root_path / filename
             ext = file_path.suffix.lower()
 
-            if ext in LANGUAGE_MAP and not should_ignore(file_path, config, gitignore_matcher):
+            if ext in LANGUAGE_MAP and not should_ignore(
+                file_path, config, gitignore_matcher
+            ):
                 files.append(file_path)
 
     return sorted(files)
@@ -531,6 +594,7 @@ def discover_files(config: Config) -> list[Path]:
 # =============================================================================
 # Parsing
 # =============================================================================
+
 
 def get_parser(language: str):
     """Get tree-sitter parser for a language."""
@@ -550,7 +614,7 @@ def get_language(language: str):
 
 def extract_text(node, source: bytes) -> str:
     """Extract text from a tree-sitter node."""
-    return source[node.start_byte:node.end_byte].decode("utf-8", errors="replace")
+    return source[node.start_byte : node.end_byte].decode("utf-8", errors="replace")
 
 
 def extract_docstring(node, source: bytes, language: str) -> str:
@@ -641,12 +705,9 @@ def parse_imports(source: bytes, tree, language: str) -> list[Import]:
         else:
             module = raw
 
-        imports.append(Import(
-            raw=raw,
-            module=module,
-            names=names,
-            line=node.start_point[0] + 1
-        ))
+        imports.append(
+            Import(raw=raw, module=module, names=names, line=node.start_point[0] + 1)
+        )
 
     return imports
 
@@ -683,8 +744,14 @@ def parse_classes(source: bytes, tree, language: str, config: Config) -> list[Cl
             # Find the class_definition ancestor
             current = node.parent
             while current:
-                if current.type in ("class_definition", "class_declaration", "struct_item",
-                                   "impl_item", "trait_item", "interface_declaration"):
+                if current.type in (
+                    "class_definition",
+                    "class_declaration",
+                    "struct_item",
+                    "impl_item",
+                    "trait_item",
+                    "interface_declaration",
+                ):
                     class_names[current.start_byte] = extract_text(node, source)
                     break
                 current = current.parent
@@ -693,15 +760,21 @@ def parse_classes(source: bytes, tree, language: str, config: Config) -> list[Cl
             while current:
                 if current.type in ("class_definition", "class_declaration"):
                     bases_text = extract_text(node, source)
-                    bases = re.findall(r'\b([A-Z][a-zA-Z0-9_]*)\b', bases_text)
+                    bases = re.findall(r"\b([A-Z][a-zA-Z0-9_]*)\b", bases_text)
                     class_bases[current.start_byte] = bases
                     break
                 current = current.parent
         elif name == "class.body":
             current = node.parent
             while current:
-                if current.type in ("class_definition", "class_declaration", "struct_item",
-                                   "impl_item", "trait_item", "interface_declaration"):
+                if current.type in (
+                    "class_definition",
+                    "class_declaration",
+                    "struct_item",
+                    "impl_item",
+                    "trait_item",
+                    "interface_declaration",
+                ):
                     class_bodies[current.start_byte] = node
                     break
                 current = current.parent
@@ -721,7 +794,7 @@ def parse_classes(source: bytes, tree, language: str, config: Config) -> list[Cl
             bases=class_bases.get(key, []),
             line=node.start_point[0] + 1,
             end_line=node.end_point[0] + 1,
-            is_private=is_private
+            is_private=is_private,
         )
 
         if config.include_docstrings:
@@ -732,7 +805,9 @@ def parse_classes(source: bytes, tree, language: str, config: Config) -> list[Cl
     return classes
 
 
-def parse_functions(source: bytes, tree, language: str, config: Config) -> list[Function]:
+def parse_functions(
+    source: bytes, tree, language: str, config: Config
+) -> list[Function]:
     """Parse function definitions from source."""
     functions = []
     lang = get_language(language)
@@ -757,10 +832,17 @@ def parse_functions(source: bytes, tree, language: str, config: Config) -> list[
     func_returns = {}  # start_byte -> return type
     func_bodies = {}  # start_byte -> body node
 
-    func_types = ("function_definition", "function_declaration",
-                  "method_definition", "method_declaration",
-                  "function_item", "method", "singleton_method",
-                  "arrow_function", "constructor_declaration")
+    func_types = (
+        "function_definition",
+        "function_declaration",
+        "method_definition",
+        "method_declaration",
+        "function_item",
+        "method",
+        "singleton_method",
+        "arrow_function",
+        "constructor_declaration",
+    )
 
     for node, name in captures:
         if name == "function":
@@ -809,8 +891,13 @@ def parse_functions(source: bytes, tree, language: str, config: Config) -> list[
         is_method = False
         parent = node.parent
         while parent:
-            if parent.type in ("class_definition", "class_body", "class_declaration",
-                               "impl_item", "declaration_list"):
+            if parent.type in (
+                "class_definition",
+                "class_body",
+                "class_declaration",
+                "impl_item",
+                "declaration_list",
+            ):
                 is_method = True
                 break
             parent = parent.parent
@@ -825,7 +912,7 @@ def parse_functions(source: bytes, tree, language: str, config: Config) -> list[
             line=node.start_point[0] + 1,
             end_line=node.end_point[0] + 1,
             is_method=is_method,
-            is_private=is_private
+            is_private=is_private,
         )
 
         if config.include_docstrings:
@@ -865,10 +952,28 @@ def extract_calls(source: bytes, body_node, language: str) -> list[str]:
             call_name = extract_text(node, source)
             if call_name and call_name not in seen:
                 # Filter out common built-ins
-                if call_name not in ("print", "len", "str", "int", "float", "list",
-                                     "dict", "set", "tuple", "range", "enumerate",
-                                     "zip", "map", "filter", "sorted", "reversed",
-                                     "console", "log", "require", "import"):
+                if call_name not in (
+                    "print",
+                    "len",
+                    "str",
+                    "int",
+                    "float",
+                    "list",
+                    "dict",
+                    "set",
+                    "tuple",
+                    "range",
+                    "enumerate",
+                    "zip",
+                    "map",
+                    "filter",
+                    "sorted",
+                    "reversed",
+                    "console",
+                    "log",
+                    "require",
+                    "import",
+                ):
                     seen.add(call_name)
                     calls.append(call_name)
 
@@ -881,11 +986,7 @@ def parse_file(file_path: Path, config: Config) -> FileInfo:
     ext = file_path.suffix.lower()
     language = LANGUAGE_MAP.get(ext, "")
 
-    info = FileInfo(
-        path=file_path,
-        relative_path=relative_path,
-        language=language
-    )
+    info = FileInfo(path=file_path, relative_path=relative_path, language=language)
 
     if not language:
         info.errors.append(f"Unsupported file extension: {ext}")
@@ -913,23 +1014,149 @@ def parse_file(file_path: Path, config: Config) -> FileInfo:
         # Associate methods with classes
         for cls in info.classes:
             cls.methods = [
-                f for f in info.functions
+                f
+                for f in info.functions
                 if f.is_method and cls.line <= f.line <= cls.end_line
             ]
             # Remove methods from top-level functions
             method_names = {m.name for m in cls.methods}
-            info.functions = [f for f in info.functions if f.name not in method_names or not f.is_method]
+            info.functions = [
+                f
+                for f in info.functions
+                if f.name not in method_names or not f.is_method
+            ]
+
+    # Enrich with contextual information if requested
+    if config.contextualized and config.granularity == "detailed":
+        enrich_with_context(info)
 
     return info
+
+
+def enrich_with_context(info: FileInfo) -> None:
+    """Enrich classes and functions with scope chains, siblings, and used imports."""
+    # Build a set of all imported names for quick lookup
+    imported_names: set[str] = set()
+    for imp in info.imports:
+        imported_names.add(imp.module.split(".")[-1])  # Last part of module
+        imported_names.update(imp.names)
+
+    # Collect all top-level entities in source order for sibling computation
+    all_entities: list[tuple[int, str, str, str]] = []  # (line, type, name, signature)
+
+    for cls in info.classes:
+        sig = f"class {cls.name}"
+        if cls.bases:
+            sig += f"({', '.join(cls.bases)})"
+        all_entities.append((cls.line, "class", cls.name, sig))
+
+    for func in info.functions:
+        if not func.is_method:
+            sig = f"{func.name}{func.params}"
+            if func.return_type:
+                sig += f" -> {func.return_type}"
+            all_entities.append((func.line, "function", func.name, sig))
+
+    # Sort by line number
+    all_entities.sort(key=lambda x: x[0])
+
+    # Build entity index for sibling lookup
+    entity_index = {(e[1], e[2]): i for i, e in enumerate(all_entities)}
+
+    # Enrich classes
+    for cls in info.classes:
+        # Scope chain for top-level class is empty (could be extended for nested classes)
+        cls.scope_chain = []
+
+        # Find used imports by checking calls in methods
+        cls_used = set()
+        for method in cls.methods:
+            for call in method.calls:
+                if call in imported_names:
+                    cls_used.add(call)
+        cls.used_imports = sorted(cls_used)
+
+        # Compute siblings
+        idx = entity_index.get(("class", cls.name))
+        if idx is not None:
+            cls.siblings = _compute_siblings(all_entities, idx)
+
+        # Enrich methods within class
+        method_list = [
+            (m.line, "method", m.name, f"{m.name}{m.params}") for m in cls.methods
+        ]
+        method_list.sort(key=lambda x: x[0])
+        method_index = {m[2]: i for i, m in enumerate(method_list)}
+
+        for method in cls.methods:
+            # Scope chain includes the class
+            method.scope_chain = [cls.name]
+
+            # Find used imports
+            method_used = set()
+            for call in method.calls:
+                if call in imported_names:
+                    method_used.add(call)
+            method.used_imports = sorted(method_used)
+
+            # Compute siblings within class
+            m_idx = method_index.get(method.name)
+            if m_idx is not None:
+                method.siblings = _compute_siblings(method_list, m_idx)
+
+    # Enrich top-level functions
+    for func in info.functions:
+        if func.is_method:
+            continue
+
+        # Scope chain is empty for top-level functions
+        func.scope_chain = []
+
+        # Find used imports
+        func_used = set()
+        for call in func.calls:
+            if call in imported_names:
+                func_used.add(call)
+        func.used_imports = sorted(func_used)
+
+        # Compute siblings
+        idx = entity_index.get(("function", func.name))
+        if idx is not None:
+            func.siblings = _compute_siblings(all_entities, idx)
+
+
+def _compute_siblings(
+    entities: list[tuple[int, str, str, str]], idx: int, max_siblings: int = 2
+) -> list[SiblingInfo]:
+    """Compute before/after siblings for an entity at given index."""
+    siblings = []
+
+    # Before siblings
+    for i in range(max(0, idx - max_siblings), idx):
+        line, etype, name, sig = entities[i]
+        siblings.append(
+            SiblingInfo(name=name, entity_type=etype, position="before", signature=sig)
+        )
+
+    # After siblings
+    for i in range(idx + 1, min(len(entities), idx + 1 + max_siblings)):
+        line, etype, name, sig = entities[i]
+        siblings.append(
+            SiblingInfo(name=name, entity_type=etype, position="after", signature=sig)
+        )
+
+    return siblings
 
 
 # =============================================================================
 # Relationship Analysis
 # =============================================================================
 
+
 @dataclass
 class Relationships:
     """Holds all relationship data."""
+
     # file -> list of imported modules
     imports: dict[str, list[str]] = field(default_factory=lambda: defaultdict(list))
     # file -> list of files it imports from
@@ -986,13 +1213,13 @@ def analyze_relationships(files: list[FileInfo], config: Config) -> Relationship
                 module.replace(".", "/") + ext
                 for ext in [".py", ".js", ".ts", ".tsx", ".go", ".rs", ".java"]
             ]
-            patterns.extend([
-                module.replace(".", "/") + "/index" + ext
-                for ext in [".js", ".ts", ".tsx"]
-            ])
-            patterns.extend([
-                module.replace(".", "/") + "/__init__.py"
-            ])
+            patterns.extend(
+                [
+                    module.replace(".", "/") + "/index" + ext
+                    for ext in [".js", ".ts", ".tsx"]
+                ]
+            )
+            patterns.extend([module.replace(".", "/") + "/__init__.py"])
 
             for other_file in files:
                 other_key = str(other_file.relative_path)
@@ -1011,7 +1238,10 @@ def analyze_relationships(files: list[FileInfo], config: Config) -> Relationship
 # Markdown Generation
 # =============================================================================
 
-def generate_markdown(files: list[FileInfo], rels: Relationships, config: Config) -> str:
+
+def generate_markdown(
+    files: list[FileInfo], rels: Relationships, config: Config
+) -> str:
     """Generate markdown codemap."""
     lines = []
 
@@ -1031,7 +1261,9 @@ def generate_markdown(files: list[FileInfo], rels: Relationships, config: Config
     lines.append(f"| Metric | Count |")
     lines.append(f"|--------|-------|")
     lines.append(f"| Files | {len(files)} |")
-    lines.append(f"| Languages | {', '.join(sorted(languages)) if languages else 'N/A'} |")
+    lines.append(
+        f"| Languages | {', '.join(sorted(languages)) if languages else 'N/A'} |"
+    )
     if config.granularity == "detailed":
         lines.append(f"| Classes/Types | {total_classes} |")
         lines.append(f"| Functions | {total_functions} |")
@@ -1116,14 +1348,37 @@ def generate_markdown(files: list[FileInfo], rels: Relationships, config: Config
                 all_classes.append((file.relative_path, cls))
 
         if all_classes:
-            for file_path, cls in sorted(all_classes, key=lambda x: (str(x[0]), x[1].name)):
+            for file_path, cls in sorted(
+                all_classes, key=lambda x: (str(x[0]), x[1].name)
+            ):
                 lines.append(f"### `{cls.name}`")
                 lines.append("")
                 lines.append(f"**File:** `{file_path}` (line {cls.line})")
                 if cls.bases:
-                    lines.append(f"**Extends:** {', '.join(f'`{b}`' for b in cls.bases)}")
+                    lines.append(
+                        f"**Extends:** {', '.join(f'`{b}`' for b in cls.bases)}"
+                    )
                 if cls.docstring:
                     lines.append(f"**Description:** {cls.docstring}")
+
+                # Contextual information
+                if config.contextualized:
+                    if cls.scope_chain:
+                        lines.append(f"**Scope:** {' > '.join(cls.scope_chain)}")
+                    if cls.used_imports:
+                        lines.append(
+                            f"**Uses:** {', '.join(f'`{i}`' for i in cls.used_imports)}"
+                        )
+                    before = [s for s in cls.siblings if s.position == "before"]
+                    after = [s for s in cls.siblings if s.position == "after"]
+                    if before:
+                        lines.append(
+                            f"**After:** {', '.join(f'`{s.name}`' for s in before)}"
+                        )
+                    if after:
+                        lines.append(
+                            f"**Before:** {', '.join(f'`{s.name}`' for s in after)}"
+                        )
 
                 if cls.methods:
                     lines.append("")
@@ -1133,6 +1388,26 @@ def generate_markdown(files: list[FileInfo], rels: Relationships, config: Config
                         if method.return_type:
                             sig += f" -> {method.return_type}"
                         lines.append(f"- `{sig}`")
+                        # Method contextual info (indented)
+                        if config.contextualized:
+                            if method.used_imports:
+                                lines.append(
+                                    f"  - Uses: {', '.join(f'`{i}`' for i in method.used_imports)}"
+                                )
+                            m_before = [
+                                s for s in method.siblings if s.position == "before"
+                            ]
+                            m_after = [
+                                s for s in method.siblings if s.position == "after"
+                            ]
+                            if m_before:
+                                lines.append(
+                                    f"  - After: {', '.join(f'`{s.name}`' for s in m_before)}"
+                                )
+                            if m_after:
+                                lines.append(
+                                    f"  - Before: {', '.join(f'`{s.name}`' for s in m_after)}"
+                                )
                 lines.append("")
         else:
             lines.append("*No classes found.*")
@@ -1169,6 +1444,26 @@ def generate_markdown(files: list[FileInfo], rels: Relationships, config: Config
                     if func.docstring:
                         lines.append(f"{func.docstring}")
                     lines.append(f"*Line {func.line}*")
+
+                    # Contextual information
+                    if config.contextualized:
+                        if func.scope_chain:
+                            lines.append(f"**Scope:** {' > '.join(func.scope_chain)}")
+                        if func.used_imports:
+                            lines.append(
+                                f"**Uses:** {', '.join(f'`{i}`' for i in func.used_imports)}"
+                            )
+                        before = [s for s in func.siblings if s.position == "before"]
+                        after = [s for s in func.siblings if s.position == "after"]
+                        if before:
+                            lines.append(
+                                f"**After:** {', '.join(f'`{s.name}`' for s in before)}"
+                            )
+                        if after:
+                            lines.append(
+                                f"**Before:** {', '.join(f'`{s.name}`' for s in after)}"
+                            )
+
                     lines.append("")
         else:
             lines.append("*No top-level functions found.*")
@@ -1196,7 +1491,9 @@ def generate_markdown(files: list[FileInfo], rels: Relationships, config: Config
         # Call Graph
         lines.append("## Call Graph")
         lines.append("")
-        lines.append("Shows function call relationships (limited to project-internal calls).")
+        lines.append(
+            "Shows function call relationships (limited to project-internal calls)."
+        )
         lines.append("")
 
         # Filter to only include calls to known functions
@@ -1205,7 +1502,9 @@ def generate_markdown(files: list[FileInfo], rels: Relationships, config: Config
 
         for caller in sorted(rels.call_graph.keys()):
             calls = rels.call_graph[caller]
-            internal_calls = [c for c in calls if c in known_funcs or any(c in k for k in known_funcs)]
+            internal_calls = [
+                c for c in calls if c in known_funcs or any(c in k for k in known_funcs)
+            ]
             if internal_calls:
                 has_calls = True
                 lines.append(f"- **`{caller}`** calls:")
@@ -1265,6 +1564,7 @@ def generate_markdown(files: list[FileInfo], rels: Relationships, config: Config
 # Main
 # =============================================================================
 
+
 def main():
     parser = argparse.ArgumentParser(
         description="Generate a codemap for AI agents.",
@@ -1276,57 +1576,60 @@ Examples:
   %(prog)s -o codemap.md            # Save to specific file
   %(prog)s --include-private        # Include private functions/classes
   %(prog)s /path/to/repo            # Map specific directory
-        """
+        """,
     )
 
     parser.add_argument(
         "directory",
         nargs="?",
         default=".",
-        help="Root directory to analyze (default: current directory)"
+        help="Root directory to analyze (default: current directory)",
     )
 
     parser.add_argument(
-        "-g", "--granularity",
+        "-g",
+        "--granularity",
         choices=["file", "detailed"],
         default="detailed",
-        help="Granularity level: 'file' for modules only, 'detailed' for classes/functions (default: detailed)"
+        help="Granularity level: 'file' for modules only, 'detailed' for classes/functions (default: detailed)",
     )
 
     parser.add_argument(
-        "-o", "--output",
-        help="Output file path (default: print to stdout)"
+        "-o", "--output", help="Output file path (default: print to stdout)"
     )
 
     parser.add_argument(
         "--include-private",
         action="store_true",
-        help="Include private functions and classes (those starting with _)"
+        help="Include private functions and classes (those starting with _)",
     )
 
     parser.add_argument(
-        "--no-docstrings",
-        action="store_true",
-        help="Exclude docstrings from output"
+        "--no-docstrings", action="store_true", help="Exclude docstrings from output"
     )
 
     parser.add_argument(
         "--no-signatures",
         action="store_true",
-        help="Exclude function signatures from output"
+        help="Exclude function signatures from output",
     )
 
     parser.add_argument(
         "--max-depth",
         type=int,
         default=10,
-        help="Maximum directory depth to traverse (default: 10)"
+        help="Maximum directory depth to traverse (default: 10)",
     )
 
     parser.add_argument(
-        "-q", "--quiet",
+        "-q", "--quiet", action="store_true", help="Suppress progress messages"
+    )
+
+    parser.add_argument(
+        "-c",
+        "--contextualized",
         action="store_true",
-        help="Suppress progress messages"
+        help="Include contextual info: scope chains, siblings, and used imports for each entity",
     )
 
     args = parser.parse_args()
@@ -1339,7 +1642,8 @@ Examples:
         include_private=args.include_private,
         include_docstrings=not args.no_docstrings,
         include_signatures=not args.no_signatures,
-        output_file=Path(args.output) if args.output else None
+        output_file=Path(args.output) if args.output else None,
+        contextualized=args.contextualized,
     )
 
     if not config.root_dir.exists():

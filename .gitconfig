@@ -4,6 +4,7 @@
 	aap = add . -p
 	cm = commit -m
 	cma = commit --amend --no-edit
+	cme = commit --allow-empty -m
 	pf = push --force
 	lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative --decorate=full -n 10
 	rst = reset HEAD^

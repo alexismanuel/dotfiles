@@ -35,6 +35,7 @@ uv run scripts/codemap.py [directory] [options]
 | `directory` | Root directory to analyze (default: current) |
 | `-g, --granularity` | `file` (structure only) or `detailed` (classes/functions) |
 | `-o, --output` | Output file path (default: stdout) |
+| `-c, --contextualized` | Include scope chains, siblings, and used imports per entity |
 | `--include-private` | Include private functions/classes (starting with `_`) |
 | `--no-docstrings` | Exclude docstrings from output |
 | `--no-signatures` | Exclude function signatures |
@@ -87,6 +88,34 @@ uv run scripts/codemap.py src/api -o API_MAP.md
 ### Include everything (private functions, all details)
 ```bash
 uv run scripts/codemap.py --include-private -o FULL_MAP.md
+```
+
+### Contextualized output for enhanced AI understanding
+```bash
+uv run scripts/codemap.py -c -o CODEMAP.md
+```
+
+The `-c/--contextualized` flag enriches each entity with:
+- **Scope chain**: Where this entity lives (e.g., `MyClass > _helper_method`)
+- **Used imports**: Which imports are referenced by this entity
+- **Siblings**: What entities come before/after in source order
+
+Example output with contextualized mode:
+
+```markdown
+### `UserService`
+
+**File:** `src/services/user.py` (line 15)
+**Extends:** `BaseService`
+**Uses:** `Database`, `Logger`
+**After:** `AuthService`
+**Before:** `OrderService`
+
+**Methods:**
+- `get_user(id: str) -> User`
+  - Uses: `Database`
+  - After: `__init__`
+  - Before: `update_user`
 ```
 
 ## Integration with AI Workflows

@@ -1,7 +1,12 @@
 # Implement Plan
 
-You are tasked with implementing an approved technical plan generated from the "Create Implementation Plan" command, typically saved in `./plan.md`. These plans include phased tasks, dependencies, code references, and success metrics
-synthesized from PRD and research.
+You are tasked with implementing an approved technical plan generated from the "Create Implementation Plan" command, typically saved in `./plan.md`. These plans include phased tasks, dependencies, code references, and success metrics synthesized from PRD and research.
+
+**Core principles from executing-plans skill:**
+- **Batch execution with checkpoints** - Execute tasks in batches (default: 3), then report for review
+- **Stop when blocked** - Ask for clarification rather than guessing
+- **Verify before claiming** - Use `verification-before-completion` skill before any completion claims
+- **Follow plan exactly** - Don't skip steps or verifications
 
 ## Invocation
 
@@ -40,26 +45,88 @@ Validate paths using List tool. If invalid or no frontmatter, prompt: "Please pr
      - `codebase-locator`: For missing refs (prompt: "Locate current files for [plan component], e.g., updated auth module.").
    - Wait for results; incorporate into todos (e.g., update task with new paths/examples). Limit to essential—prefer direct tools (Grep/Read) for simple locates.
 
-4. **Phased Implementation**:
-   - Proceed phase-by-phase (or from start_phase): Mark todo in_progress, implement using Edit/Bash tools (e.g., edit files per task, run builds).
-     - Follow plan intent: Actionable steps with code refs (e.g., "Add toggle in settings.ts:200 using dark-mode pattern from research").
-     - Adapt proactively: If mismatch, STOP, report clearly:
-       ```
-       Mismatch in [Task/Phase]:
-       Plan: [expected, e.g., "Use existing Auth hook"]
-       Found: [actual, e.g., "Hook refactored to useContext"]
-       Impact: [why it matters, e.g., "Breaks dependency on legacy component"]
-       Proposal: [suggestion, e.g., "Update to new hook; est. +1h"]
-       Proceed? (y/n/adjust)
-       ```
-     - After each task/phase: Verify with plan success criteria (e.g., run `npm test`, `npm run lint` via Bash). Fix issues immediately.
-   - Update plan: After phase completion, use Edit to add checkmarks (- [x]), append progress notes under ## Implementation Log [ISO timestamp]: "Completed [tasks]; adaptations: [summary]. Verification: [test results]."
+4. **Batch Execution with Checkpoints**:
+   
+   **Default batch size: 3 tasks**
+   
+   For each task in the batch:
+   1. Mark as `in_progress` in todowrite
+   2. Follow each step exactly (plan has bite-sized steps)
+   3. Run verifications as specified in the plan
+   4. Mark as `completed`
+   
+   **After each batch, STOP and report:**
+   ```
+   Batch complete (Tasks 1-3).
+   
+   Implemented:
+   - [Task 1]: [Brief summary of what was done]
+   - [Task 2]: [Brief summary]
+   - [Task 3]: [Brief summary]
+   
+   Verification output:
+   [Test/lint/build results]
+   
+   Ready for feedback.
+   ```
+   
+   **Wait for user feedback before continuing to next batch.**
+   
+   **If mismatch found, STOP immediately:**
+   ```
+   Mismatch in [Task/Phase]:
+   Plan: [expected, e.g., "Use existing Auth hook"]
+   Found: [actual, e.g., "Hook refactored to useContext"]
+   Impact: [why it matters, e.g., "Breaks dependency on legacy component"]
+   Proposal: [suggestion, e.g., "Update to new hook; est. +1h"]
+   Proceed? (y/n/adjust)
+   ```
+   
+   - Update plan: After batch completion, use Edit to add checkmarks (- [x]), append progress notes under ## Implementation Log [ISO timestamp].
 
 5. **Verification and Completion**:
-   - Batch verifications: After full phase, run all checks (e.g., tests, lint, typecheck—discover via package.json or plan).
-   - If failures: Debug (e.g., use Grep for errors), fix, re-verify. Report: "Fixed [issue] in [file]; tests now pass."
-   - On full completion: Update plan frontmatter (via Edit): status: implemented; last_updated: [ISO]; last_updated_by: opencode; implementation_notes: [brief summary].
-   - Confirm with user: "Phase [N] complete. Summary: [3-5 bullets on changes, refs]. Next phase? Or adjustments?"
+   
+   **CRITICAL: Use `verification-before-completion` skill before claiming anything is done.**
+   
+   - Run ALL verification commands fresh (tests, lint, typecheck)
+   - Read the full output, check exit codes
+   - Only claim "passes" if you see evidence in THIS response
+   - If failures: Use `systematic-debugging` skill to investigate root cause
+   
+   **On full completion:**
+   - Update plan frontmatter: status: implemented; last_updated: [ISO]; last_updated_by: opencode
+   - Run final verification suite
+   - Report with evidence:
+     ```
+     Implementation complete.
+     
+     Verification evidence:
+     - Tests: [X/X passing - show output]
+     - Lint: [0 errors - show output]
+     - Build: [exit 0 - show output]
+     
+     Summary: [3-5 bullets on changes]
+     
+     Next steps? (Create PR / Run full suite / Keep as-is)
+     ```
+
+## When to Stop and Ask for Help
+
+**STOP executing immediately when:**
+- Hit a blocker mid-batch (missing dependency, test fails, instruction unclear)
+- Plan has critical gaps preventing starting
+- You don't understand an instruction
+- Verification fails repeatedly (3+ times)
+
+**Ask for clarification rather than guessing.**
+
+## When to Revisit Earlier Steps
+
+**Return to Review (Step 1) when:**
+- User updates the plan based on your feedback
+- Fundamental approach needs rethinking
+
+**Don't force through blockers** - stop and ask.
 
 ## Handle Follow-Ups and Resumption
 
