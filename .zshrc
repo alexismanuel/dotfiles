@@ -15,15 +15,33 @@ export PATH='/Users/alexismanuel/.duckdb/cli/latest':$PATH
 export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
 export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
 export PATH="/Users/alexismanuel/.local/bin:$PATH"
+export PATH="$HOMEBREW_PREFIX/opt/coreutils/libexec/gnubin:$PATH"
 
 export PYENV_VIRTUALENV_DISABLE_PROMPT=1
 eval "$(starship init zsh)"
 fastfetch
-bindkey -v
 
+. "$HOME/.cargo/env"
 
 # opencode
 export PATH=/Users/alexismanuel/.opencode/bin:$PATH
 
 # GPG
 export GPG_TTY=$(tty)
+
+# zoxide
+eval "$(zoxide init zsh)"
+
+
+# bun completions
+[ -s "/Users/alexismanuel/.bun/_bun" ] && source "/Users/alexismanuel/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+alias oc="opencode"
+
+unalias br 2>/dev/null  # br installer - remove conflicting alias
+
+# Pi tools
+export PATH="$HOME/.pi/bin:$PATH"

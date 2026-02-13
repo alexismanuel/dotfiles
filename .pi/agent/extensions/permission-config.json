@@ -1,0 +1,61 @@
+{
+  "name": "permission",
+  "version": "1.0.0",
+  "description": "OpenCode-style permission system for pi",
+  "entry": "permission-extension.ts",
+  "enabled": false,
+  "flags": [
+    {
+      "name": "enable-permissions",
+      "type": "boolean",
+      "description": "Enable the permission system",
+      "default": false
+    }
+  ],
+  "agents": {
+    "build": {
+      "description": "Full access agent for development work",
+      "permissions": {
+        "*": "allow",
+        "bash": {
+          "*": "allow",
+          "rm -rf /": "deny",
+          "rm -rf /*": "deny",
+          "sudo *": "ask"
+        },
+        "read": {
+          "*": "allow",
+          "*.env": "ask",
+          "*.env.*": "ask"
+        }
+      }
+    },
+    "safe": {
+      "description": "Read-only agent for safe exploration",
+      "permissions": {
+        "read": "allow",
+        "glob": "allow",
+        "grep": "allow",
+        "find": "allow",
+        "ls": "allow",
+        "bash": "deny",
+        "edit": "deny",
+        "write": "deny"
+      }
+    },
+    "review": {
+      "description": "Code review agent - can read and comment but not modify",
+      "permissions": {
+        "read": "allow",
+        "glob": "allow",
+        "grep": "allow",
+        "find": "allow",
+        "ls": "allow",
+        "bash": "ask",
+        "edit": "deny",
+        "write": "deny"
+      }
+    }
+  },
+  "defaultAgent": "build"
+}

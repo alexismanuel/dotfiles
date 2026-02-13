@@ -1,0 +1,565 @@
+/**
+ * Pi Permission Extension
+ * Integrates OpenCode-style permission system into pi
+ * 
+ * Place this file in ~/.pi/extensions/
+ * Enable by default or use --disable-permissions to disable
+ */
+
+import type { ExtensionAPI, ExtensionContext } from "@mariozechner/pi-coding-agent";
+
+// Permission types
+type PermissionAction = "allow" | "deny" | "ask";
+
+interface PermissionRule {
+  permission: string;
+  pattern: string;
+  action: PermissionAction;
+}
+
+type PermissionRuleset = PermissionRule[];
+
+interface PermissionRequest {
+  id: string;
+  sessionID: string;
+  permission: string;
+  patterns: string[];
+  metadata: Record<string, any>;
+  toolCallId?: string;
+}
+
+type PermissionReply = "once" | "always" | "reject";
+
+// Wildcard matching utility
+function wildcardMatch(str: string, pattern: string): boolean {
+  const regexPattern = pattern
+    .replace(/[.+^${}()|[\]\\]/g, "\\$&")
+    .replace(/\*/g, ".*");
+  const regex = new RegExp(`^${regexPattern}$`);
+  return regex.test(str);
+}
+
+// Permission Engine
+class PermissionEngine {
+  private projectID: string;
+  private pending = new Map<string, {
+    info: PermissionRequest;
+    promise: Promise<void>;
+    resolve: () => void;
+    reject: (error: Error) => void;
+  }>();
+  private approved: PermissionRuleset = [];
+  private storageKey: string;
+
+  constructor(projectID: string) {
+    this.projectID = projectID;
+    this.storageKey = `pi_permissions_${projectID}`;
+    this.loadStored();
+  }
+
+  private loadStored(): void {
+    // localStorage is not available in Node.js/Bun environment
+    // For now, we use in-memory storage only
+    // TODO: Use pi's storage API if available
+    this.approved = [];
+  }
+
+  private saveStored(): void {
+    // localStorage is not available in Node.js/Bun environment
+    // For now, we use in-memory storage only
+    // TODO: Use pi's storage API if available
+  }
+
+  static fromConfig(config: Record<string, PermissionAction | Record<string, PermissionAction>>): PermissionRuleset {
+    const ruleset: PermissionRuleset = [];
+    for (const [key, value] of Object.entries(config)) {
+      if (typeof value === "string") {
+        ruleset.push({ permission: key, pattern: "*", action: value });
+      } else {
+        for (const [pattern, action] of Object.entries(value)) {
+          ruleset.push({ permission: key, pattern, action });
+        }
+      }
+    }
+    return ruleset;
+  }
+
+  static merge(...rulesets: PermissionRuleset[]): PermissionRuleset {
+    return rulesets.flat();
+  }
+
+  evaluate(permission: string, pattern: string, ...rulesets: PermissionRuleset[]): PermissionRule {
+    const merged = PermissionEngine.merge(...rulesets);
+    const match = merged.findLast(
+      (rule) =>
+        wildcardMatch(permission, rule.permission) &&
+        wildcardMatch(pattern, rule.pattern)
+    );
+    return match ?? { action: "ask", permission, pattern: "*" };
+  }
+
+  isAllowed(permission: string, patterns: string[], ...rulesets: PermissionRuleset[]): boolean {
+    return patterns.every(
+      (pattern) => this.evaluate(permission, pattern, ...rulesets).action === "allow"
+    );
+  }
+
+  isDenied(permission: string, patterns: string[], ...rulesets: PermissionRuleset[]): boolean {
+    return patterns.some(
+      (pattern) => this.evaluate(permission, pattern, ...rulesets).action === "deny"
+    );
+  }
+
+  ask(input: {
+    id?: string;
+    sessionID: string;
+    permission: string;
+    patterns: string[];
+    metadata: Record<string, any>;
+    always: string[];
+    ruleset: PermissionRuleset;
+    toolCallId?: string;
+  }): { action: "allow" } | { action: "deny"; error: Error } | { action: "ask"; requestId: string } {
+    const id = input.id ?? `perm_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+
+    for (const pattern of input.patterns) {
+      const rule = this.evaluate(input.permission, pattern, input.ruleset, this.approved);
+
+      if (rule.action === "deny") {
+        return {
+          action: "deny",
+          error: new PermissionDeniedError(
+            `Permission denied: ${input.permission} ${pattern}`
+          ),
+        };
+      }
+
+      if (rule.action === "ask") {
+        const info: PermissionRequest = {
+          id,
+          sessionID: input.sessionID,
+          permission: input.permission,
+          patterns: input.patterns,
+          metadata: input.metadata,
+          toolCallId: input.toolCallId,
+        };
+
+        // Store pending request with resolvers
+        let resolveFn: (() => void) | undefined;
+        let rejectFn: ((error: Error) => void) | undefined;
+        const promise = new Promise<void>((resolve, reject) => {
+          resolveFn = resolve;
+          rejectFn = reject;
+        });
+
+        this.pending.set(id, { info, promise, resolve: resolveFn!, reject: rejectFn! });
+
+        return { action: "ask", requestId: id };
+      }
+    }
+
+    return { action: "allow" };
+  }
+
+  async reply(requestID: string, reply: PermissionReply, message?: string): Promise<void> {
+    const pending = this.pending.get(requestID);
+    if (!pending) return;
+
+    this.pending.delete(requestID);
+
+    if (reply === "reject") {
+      if (message) {
+        pending.reject(new PermissionCorrectedError(message));
+      } else {
+        pending.reject(new PermissionRejectedError());
+      }
+
+      // Reject all other pending for same session
+      for (const [id, p] of this.pending.entries()) {
+        if (p.info.sessionID === pending.info.sessionID) {
+          this.pending.delete(id);
+          p.reject(new PermissionRejectedError());
+        }
+      }
+      return;
+    }
+
+    if (reply === "once") {
+      pending.resolve();
+      return;
+    }
+
+    if (reply === "always") {
+      for (const pattern of pending.info.patterns) {
+        this.approved.push({
+          permission: pending.info.permission,
+          pattern,
+          action: "allow",
+        });
+      }
+      this.saveStored();
+      pending.resolve();
+
+      // Check if any other pending requests are now covered
+      for (const [id, p] of this.pending.entries()) {
+        if (p.info.sessionID !== pending.info.sessionID) continue;
+        const allAllowed = p.info.patterns.every(
+          (pattern) => this.evaluate(p.info.permission, pattern, this.approved).action === "allow"
+        );
+        if (allAllowed) {
+          this.pending.delete(id);
+          p.resolve();
+        }
+      }
+    }
+  }
+
+  listPending(): PermissionRequest[] {
+    return Array.from(this.pending.values())
+      .map((p) => p.info)
+      .sort((a, b) => a.id.localeCompare(b.id));
+  }
+
+  getApproved(): PermissionRuleset {
+    return [...this.approved];
+  }
+
+  clearApprovals(): void {
+    this.approved = [];
+    // localStorage not available in Node.js/Bun
+  }
+}
+
+// Error classes
+class PermissionDeniedError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "PermissionDeniedError";
+  }
+}
+
+class PermissionRejectedError extends Error {
+  constructor() {
+    super("The user rejected permission to use this specific tool call.");
+    this.name = "PermissionRejectedError";
+  }
+}
+
+class PermissionCorrectedError extends Error {
+  constructor(public readonly feedback: string) {
+    super(`The user rejected permission with the following feedback: ${feedback}`);
+    this.name = "PermissionCorrectedError";
+  }
+}
+
+// Agent profiles
+const AGENT_PROFILES: Record<string, { ruleset: PermissionRuleset; description: string }> = {
+  build: {
+    description: "Full access agent for development work",
+    ruleset: PermissionEngine.fromConfig({
+      "*": "allow",
+      bash: {
+        "*": "allow",
+        "rm -rf /": "deny",
+        "rm -rf /*": "deny",
+        "sudo *": "ask",
+      },
+      read: {
+        "*": "allow",
+        "*.env": "ask",
+        "*.env.*": "ask",
+      },
+    }),
+  },
+  safe: {
+    description: "Read-only agent for safe exploration",
+    ruleset: PermissionEngine.fromConfig({
+      read: "allow",
+      grep: "allow",
+      find: "allow",
+      ls: "allow",
+      bash: "deny",
+      edit: "deny",
+      write: "deny",
+    }),
+  },
+  review: {
+    description: "Code review agent - can read and comment but not modify",
+    ruleset: PermissionEngine.fromConfig({
+      read: "allow",
+      grep: "allow",
+      find: "allow",
+      ls: "allow",
+      bash: "ask",
+      edit: "deny",
+      write: "deny",
+    }),
+  },
+};
+
+// Extension state
+let engine: PermissionEngine | null = null;
+let currentAgent = "build";
+let extensionEnabled = true;
+
+/**
+ * Get tool permission info from tool call event
+ */
+function getToolPermissionInfo(
+  toolName: string,
+  input: Record<string, any>
+): { permission: string; patterns: string[] } {
+  switch (toolName) {
+    case "bash":
+      return {
+        permission: "bash",
+        patterns: [input.command],
+      };
+    case "read":
+      return {
+        permission: "read",
+        patterns: [input.file_path || input.path],
+      };
+    case "edit":
+    case "write":
+      return {
+        permission: "edit",
+        patterns: [input.file_path || input.path],
+      };
+    case "grep":
+      return {
+        permission: "grep",
+        patterns: [input.path || "*"],
+      };
+    case "find":
+    case "ls":
+      return {
+        permission: toolName,
+        patterns: [input.path || "."],
+      };
+    default:
+      return {
+        permission: toolName,
+        patterns: ["*"],
+      };
+  }
+}
+
+/**
+ * Format permission message for display
+ */
+function formatPermissionMessage(toolName: string, input: Record<string, any>): string {
+  switch (toolName) {
+    case "bash":
+      return `Run command: ${input.command}`;
+    case "read":
+      return `Read file: ${input.file_path || input.path}`;
+    case "edit":
+      return `Edit file: ${input.file_path || input.path}`;
+    case "write":
+      return `Write file: ${input.file_path || input.path}`;
+    case "grep":
+      return `Search for "${input.pattern}" in ${input.path || "current directory"}`;
+    case "find":
+      return `Find files: ${input.pattern} in ${input.path || "."}`;
+    case "ls":
+      return `List directory: ${input.path || "."}`;
+    default:
+      return `Execute ${toolName}`;
+  }
+}
+
+/**
+ * Pi Permission Extension
+ * Based on permission-gate.ts example pattern
+ */
+export default function permissionExtension(pi: ExtensionAPI) {
+  // Register disable flag (extension is enabled by default)
+  pi.registerFlag("disable-permissions", {
+    type: "boolean",
+    description: "Disable the permission system",
+    default: false,
+  });
+
+  // Check if disabled via flag on session start
+  pi.on("session_start", async (_event, _ctx) => {
+    if (pi.getFlag("disable-permissions") === true) {
+      extensionEnabled = false;
+      return;
+    }
+
+    // Initialize permission engine
+    engine = new PermissionEngine("default");
+  });
+
+  // Register /permission command
+  pi.registerCommand("permission", {
+    description: "Manage permission settings",
+    async handler(args: string, cmdCtx) {
+      const [subcommand, ...rest] = args.trim().split(/\s+/);
+
+      switch (subcommand) {
+        case "agent": {
+          const [agentName] = rest;
+          if (!agentName) {
+            cmdCtx.ui.notify(`Current agent: ${currentAgent}`, "info");
+            cmdCtx.ui.notify(`Available: ${Object.keys(AGENT_PROFILES).join(", ")}`, "info");
+            return;
+          }
+          if (AGENT_PROFILES[agentName]) {
+            currentAgent = agentName;
+            cmdCtx.ui.notify(`Switched to ${agentName} agent`, "info");
+          } else {
+            cmdCtx.ui.notify(`Unknown agent: ${agentName}`, "error");
+          }
+          break;
+        }
+
+        case "status": {
+          if (!extensionEnabled) {
+            cmdCtx.ui.notify("Permission extension is disabled", "error");
+            return;
+          }
+          const approved = engine?.getApproved() ?? [];
+          const pending = engine?.listPending() ?? [];
+          cmdCtx.ui.notify(`Agent: ${currentAgent}`, "info");
+          cmdCtx.ui.notify(`Approved rules: ${approved.length}`, "info");
+          cmdCtx.ui.notify(`Pending requests: ${pending.length}`, "info");
+          break;
+        }
+
+        case "clear": {
+          if (!extensionEnabled) {
+            cmdCtx.ui.notify("Permission extension is disabled", "error");
+            return;
+          }
+          engine?.clearApprovals();
+          cmdCtx.ui.notify("All permission approvals cleared", "info");
+          break;
+        }
+
+        case "disable": {
+          extensionEnabled = false;
+          cmdCtx.ui.notify("Permission extension disabled for this session", "info");
+          break;
+        }
+
+        case "enable": {
+          extensionEnabled = true;
+          cmdCtx.ui.notify("Permission extension enabled", "info");
+          break;
+        }
+
+        case "help":
+        default:
+          cmdCtx.ui.notify("Usage: /permission [agent|status|clear|disable|enable]", "info");
+          cmdCtx.ui.notify("  agent [name] - Switch agent (build/safe/review)", "info");
+          cmdCtx.ui.notify("  status - Show permission status", "info");
+          cmdCtx.ui.notify("  clear - Clear all approvals", "info");
+          cmdCtx.ui.notify("  disable - Disable for this session", "info");
+          cmdCtx.ui.notify("  enable - Re-enable", "info");
+      }
+    },
+  });
+
+  // Intercept tool calls - based on permission-gate.ts pattern
+  pi.on("tool_call", async (event, handlerCtx) => {
+    // Skip if extension disabled
+    if (!extensionEnabled) return undefined;
+    
+    // Skip if no engine yet
+    if (!engine) return undefined;
+
+    const { permission, patterns } = getToolPermissionInfo(event.toolName, event.input);
+    const agent = AGENT_PROFILES[currentAgent];
+    if (!agent) return undefined;
+
+    const result = engine.ask({
+      sessionID: handlerCtx.sessionManager.getCurrentSession()?.id ?? "default",
+      permission,
+      patterns,
+      metadata: {
+        tool: event.toolName,
+        input: event.input,
+      },
+      always: patterns,
+      ruleset: agent.ruleset,
+      toolCallId: event.toolCallId,
+    });
+
+    // Handle deny
+    if (result.action === "deny") {
+      return {
+        block: true,
+        reason: result.error.message,
+      };
+    }
+
+    // Handle ask - show permission dialog
+    if (result.action === "ask") {
+      const requestId = result.requestId;
+      const pendingRequest = engine.listPending().find((r) => r.id === requestId);
+
+      if (!pendingRequest) {
+        return { block: true, reason: "Permission check failed - request not found" };
+      }
+
+      // Show permission dialog
+      const options = ["Allow Once", "Always Allow", "Deny"];
+      const message = formatPermissionMessage(event.toolName, event.input);
+
+      if (!handlerCtx.hasUI) {
+        // No UI available, block by default
+        await engine.reply(requestId, "reject");
+        return { block: true, reason: "Permission required (no UI available)" };
+      }
+
+      const choice = await handlerCtx.ui.select(
+        `Permission Required: ${permission}\n\n${message}`,
+        options,
+        { timeout: 60000 }
+      );
+
+      let reply: PermissionReply;
+      let feedback: string | undefined;
+
+      if (choice === "Allow Once") {
+        reply = "once";
+      } else if (choice === "Always Allow") {
+        reply = "always";
+      } else {
+        reply = "reject";
+        // Ask for feedback
+        feedback = await handlerCtx.ui.input(
+          "Deny with feedback? (optional)",
+          "Press Enter to deny without feedback"
+        ) || undefined;
+      }
+
+      await engine.reply(requestId, reply, feedback);
+
+      if (reply === "reject") {
+        return {
+          block: true,
+          reason: feedback || "Permission denied by user",
+        };
+      }
+
+      // Permission granted
+      return undefined;
+    }
+  });
+
+  // Handle session end - clean up pending
+  pi.on("session_shutdown", async () => {
+    if (!engine) return;
+    const pending = engine.listPending();
+    for (const request of pending) {
+      try {
+        await engine.reply(request.id, "reject");
+      } catch {
+        // Ignore errors during cleanup
+      }
+    }
+  });
+}

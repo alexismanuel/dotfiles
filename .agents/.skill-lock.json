@@ -1,0 +1,131 @@
+{
+  "version": 3,
+  "skills": {
+    "supabase-postgres-best-practices": {
+      "source": "supabase/agent-skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/supabase/agent-skills.git",
+      "skillPath": "skills/postgres-best-practices/SKILL.md",
+      "skillFolderHash": "e549f070fca7ca2284e06f17e8a27260443aaf0d",
+      "installedAt": "2026-01-25T20:18:58.156Z",
+      "updatedAt": "2026-01-25T20:18:58.156Z"
+    },
+    "remotion-best-practices": {
+      "source": "remotion-dev/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/remotion-dev/skills.git",
+      "skillPath": "skills/remotion/SKILL.md",
+      "skillFolderHash": "9571b6f1d9b42233e4ce48ad121933574d67023c",
+      "installedAt": "2026-01-25T20:20:14.420Z",
+      "updatedAt": "2026-01-25T20:20:14.420Z"
+    },
+    "skill-creator": {
+      "source": "anthropics/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/anthropics/skills.git",
+      "skillPath": "skills/skill-creator/SKILL.md",
+      "skillFolderHash": "7bd8fc459f09f0e14dcc2adbb4a5a58e60ea755c",
+      "installedAt": "2026-01-25T20:21:12.030Z",
+      "updatedAt": "2026-01-25T20:21:12.030Z"
+    },
+    "frontend-design": {
+      "source": "anthropics/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/anthropics/skills.git",
+      "skillPath": "skills/frontend-design/SKILL.md",
+      "skillFolderHash": "928950704df8a8b885c03de5da626331e6f29cf8",
+      "installedAt": "2026-01-25T20:21:47.102Z",
+      "updatedAt": "2026-01-25T20:21:47.102Z"
+    },
+    "opentui": {
+      "source": "msmps/opentui-skill",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/msmps/opentui-skill.git",
+      "skillPath": "skill/opentui/SKILL.md",
+      "skillFolderHash": "c539349c35c62c8be1bf963c3cad3bb3b57842a5",
+      "installedAt": "2026-01-25T20:23:43.560Z",
+      "updatedAt": "2026-01-25T20:23:43.560Z"
+    },
+    "pdf": {
+      "source": "anthropics/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/anthropics/skills.git",
+      "skillPath": "skills/pdf/SKILL.md",
+      "skillFolderHash": "f3e7babdd8d9cc8b5627311c16e07f1218c39bff",
+      "installedAt": "2026-01-25T20:24:21.224Z",
+      "updatedAt": "2026-01-25T20:24:21.224Z"
+    },
+    "internal-comms": {
+      "source": "anthropics/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/anthropics/skills.git",
+      "skillPath": "skills/internal-comms/SKILL.md",
+      "skillFolderHash": "8e2c21adc81f221477a4d3ecec07abcbc8a9320a",
+      "installedAt": "2026-01-25T20:37:31.753Z",
+      "updatedAt": "2026-01-25T20:37:31.753Z"
+    },
+    "brainstorming": {
+      "source": "obra/superpowers",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/obra/superpowers.git",
+      "skillPath": "skills/brainstorming/SKILL.md",
+      "skillFolderHash": "761c2f359474328f40d73db9cb4cc1f5721917e5",
+      "installedAt": "2026-01-25T20:38:48.292Z",
+      "updatedAt": "2026-01-25T20:38:48.292Z"
+    },
+    "agent-md-refactor": {
+      "source": "softaworks/agent-toolkit",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/softaworks/agent-toolkit.git",
+      "skillPath": "skills/agent-md-refactor/SKILL.md",
+      "skillFolderHash": "89a8fede359cb48c66f1af44c5aa8fc07b82cded",
+      "installedAt": "2026-01-25T20:42:41.641Z",
+      "updatedAt": "2026-01-25T20:42:41.641Z"
+    },
+    "commit-work": {
+      "source": "softaworks/agent-toolkit",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/softaworks/agent-toolkit.git",
+      "skillPath": "skills/commit-work/SKILL.md",
+      "skillFolderHash": "ac7c2ea0f24eb668f5b80e4f237efa4a90f12312",
+      "installedAt": "2026-01-25T20:43:53.679Z",
+      "updatedAt": "2026-01-25T20:43:53.679Z"
+    },
+    "ship-learn-next": {
+      "source": "softaworks/agent-toolkit",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/softaworks/agent-toolkit.git",
+      "skillPath": "skills/ship-learn-next/SKILL.md",
+      "skillFolderHash": "b7e94f80ccd59c128aac8653af61ad90fc67bf51",
+      "installedAt": "2026-01-25T20:44:45.357Z",
+      "updatedAt": "2026-01-25T20:44:45.357Z"
+    },
+    "crafting-effective-readmes": {
+      "source": "softaworks/agent-toolkit",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/softaworks/agent-toolkit.git",
+      "skillPath": "skills/crafting-effective-readmes/SKILL.md",
+      "skillFolderHash": "66699fadc07682313e8dadf041a881192da39524",
+      "installedAt": "2026-01-25T20:45:07.460Z",
+      "updatedAt": "2026-01-25T20:45:07.460Z"
+    },
+    "professional-communication": {
+      "source": "softaworks/agent-toolkit",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/softaworks/agent-toolkit.git",
+      "skillPath": "skills/professional-communication/SKILL.md",
+      "skillFolderHash": "a131460b559752fae7756380394d7e21f7c0db6a",
+      "installedAt": "2026-01-25T20:45:28.623Z",
+      "updatedAt": "2026-01-25T20:45:28.623Z"
+    },
+    "humanizer": {
+      "source": "softaworks/agent-toolkit",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/softaworks/agent-toolkit.git",
+      "skillPath": "skills/humanizer/SKILL.md",
+      "skillFolderHash": "004c1998fffe4d5cd4535123d65cf9fb1a107b64",
+      "installedAt": "2026-01-25T20:45:52.143Z",
+      "updatedAt": "2026-01-25T20:45:52.143Z"
+    }
+  }
+}

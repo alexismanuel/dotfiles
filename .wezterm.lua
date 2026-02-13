@@ -104,4 +104,5 @@ config.foreground_text_hsb = {
 	saturation = 1.2,
 	brightness = 1.5,
 }
+config.enable_kitty_keyboard = true
 return config

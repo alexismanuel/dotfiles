@@ -6,8 +6,19 @@ alias v='vim'
 alias drm='docker ps -qa | xargs -r docker rm -f'
 alias kubestart='minikube start --vm-driver=docker'
 alias prm="kubectl get pods -A -o jsonpath='{.items[*].metadata.name}' | xargs kubectl delete pod"
+alias pad="pyenv activate data-pipelines"
+alias w="cd /Users/alexismanuel/workspace/continuity/"
+wt () {
+        cd /Users/alexismanuel/workspace/continuity/rd-$1/engine/data_pipelines
+}
 alias ask="llm -m deepseek-r1:latest"
 alias uvt="uv tool"
 alias ls="eza"
-alias ll="ls -l"
+alias ll="eza -l"
+alias la="eza -a"
+alias lla="eza -la"
+alias desc='aws ec2 describe-instances --region=eu-west-1 --query "Reservations[].Instances[].{launch_time:LaunchTime,id:InstanceId,type:InstanceType,dnsname:PublicDnsName, username:Tags[?Key==\`USERNAME\`]|[0].Value, name:Tags[?Key==\`Name\`]|[0].Value, forever_running:Tags[?Key==\`FOREVER_RUNNING\`]|[0].Value} | sort_by([], &launch_time)" --filters "Name=instance-state-name,Values=running"'
 alias oc=opencode
+alias obs="cd /Users/alexismanuel/workspace/obsidian_notes/notes"
+alias jup="uv run --with jupyter jupyter lab"
+alias wi="cd /Users/alexismanuel/workspace/cnty-i18n/engine"

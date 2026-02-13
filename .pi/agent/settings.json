@@ -1,0 +1,12 @@
+{
+  "lastChangelogVersion": "0.52.10",
+  "packages": [
+    "npm:pi-interview",
+    "npm:pi-web-access",
+    "npm:pi-review-loop",
+    "npm:pi-powerline-footer"
+  ],
+  "defaultProvider": "openrouter",
+  "defaultModel": "moonshotai/kimi-k2.5",
+  "defaultThinkingLevel": "high"
+}

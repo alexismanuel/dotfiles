@@ -47,8 +47,11 @@
 	email = alexis.manuelpro@gmail.com
 	name = alexismanuel
 	signingkey = 01726D585F3B868E
+[includeIf "gitdir:~/workspace/agents/"]
+	path = ~/workspace/continuity/.gitconfig
 [includeIf "gitdir:~/workspace/continuity/"]
 	path = ~/workspace/continuity/.gitconfig
 	signingkey = B3D1ED1BC7FB328B
 [gpg]
 	program = /opt/homebrew/bin/gpg
+	allowSignForDaemon = gpg-agent
