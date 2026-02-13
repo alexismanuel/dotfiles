@@ -272,7 +272,6 @@ jira login
 ~/.config/opencode/
 ├── opencode.json          # Main configuration
 ├── package.json           # Node.js dependencies for plugins
-├── skill-rules.json       # Skill trigger rules for enforce-skill plugin
 ├── .opencodeignore        # Global file protection patterns
 ├── plugin/
 │   ├── enforce-skill.js   # Auto-suggest skills

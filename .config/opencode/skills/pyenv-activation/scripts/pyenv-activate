@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+# pyenv-activate - Activate a pyenv virtual environment with fallback
+
+set -e
+
+ENV_NAME="${1:-}"
+PYENV_ROOT="${PYENV_ROOT:-$HOME/.pyenv}"
+
+usage() {
+    echo "Usage: pyenv-activate <environment-name>"
+    echo "Example: pyenv-activate data-workers"
+    exit 1
+}
+
+if [[ -z "$ENV_NAME" ]]; then
+    usage
+fi
+
+# Find the environment path
+ENV_PATH="$PYENV_ROOT/versions"/*/envs/"$ENV_NAME"
+
+if [[ ! -d "$ENV_PATH" ]]; then
+    echo "Error: Environment '$ENV_NAME' not found"
+    echo "Available environments:"
+    pyenv versions | grep -v system
+    exit 1
+fi
+
+ACTIVATE_SCRIPT="$ENV_PATH/bin/activate"
+
+if [[ -f "$ACTIVATE_SCRIPT" ]]; then
+    source "$ACTIVATE_SCRIPT"
+    echo "Activated $ENV_NAME"
+    python --version
+else
+    echo "Error: Activate script not found at $ACTIVATE_SCRIPT"
+    exit 1
+fi

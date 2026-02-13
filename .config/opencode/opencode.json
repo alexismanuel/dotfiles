@@ -1,15 +1,18 @@
 {
 	"$schema": "https://opencode.ai/config.json",
-	"model": "openrouter/minimax/minimax-m2.1",
 	"share": "disabled",
 	"autoshare": false,
 	"autoupdate": true,
-	"small_model": "openrouter/z-ai/glm-4.6",
+	"plugin": ["opencode-handoff"],
 	"permission": {
 		"external_directory": "ask",
 		"bash": {
-			"git commit": "deny",
-			"git push": "deny"
+			"git push": "ask",
+			"rm *": "ask",
+			"del *": "deny",
+			"chown *": "deny",
+			"chgrp *": "deny",
+			"chmod *": "deny"
 		}
 	},
 	"lsp": {
@@ -61,5 +64,206 @@
 		"agent_list": "<leader>a",
 		"agent_cycle": "tab",
 		"agent_cycle_reverse": "shift+tab"
+	},
+	"agent": {
+		"general": {
+			"model": "openrouter/moonshotai/kimi-k2.5",
+			"permissions": {
+				"skill": {
+					"*": "allow"
+				}
+			}
+		},
+		"explore": {
+			"model": "openrouter/moonshotai/kimi-k2.5",
+			"permissions": {
+				"skill": {
+					"*": "deny"
+				}
+			}
+		},
+		"mechanist": {
+			"model": "openrouter/moonshotai/kimi-k2.5",
+			"permissions": {
+				"skill": {
+					"*": "allow"
+				}
+			}
+		},
+		"codebase-analyzer": {
+			"model": "openrouter/moonshotai/kimi-k2.5",
+			"permissions": {
+				"skill": {
+					"*": "deny"
+				}
+			}
+		},
+		"codebase-locator": {
+			"model": "openrouter/moonshotai/kimi-k2.5",
+			"permissions": {
+				"skill": {
+					"*": "deny"
+				}
+			}
+		},
+		"codebase-pattern-finder": {
+			"model": "openrouter/moonshotai/kimi-k2.5",
+			"permissions": {
+				"skill": {
+					"*": "deny"
+				}
+			}
+		},
+		"guardian": {
+			"model": "openrouter/moonshotai/kimi-k2.5",
+			"permissions": {
+				"task": "false",
+				"skill": {
+					"*": "deny",
+					"obsidian-*": "allow",
+					"daily-wrapup": "allow"
+				}
+			}
+		},
+		"code-reviewer": {
+			"model": "anthropic/claude-sonnet-4-5",
+			"reasoningEffort": "high",
+			"textVerbosity": "low",
+			"permissions": {
+				"skill": {
+					"*": "deny",
+					"mr-*": "allow",
+					"jira-*": "allow",
+					"git-*": "allow"
+				}
+			}
+		},
+		"orchestrator": {
+			"reasoningEffort": "high",
+			"textVerbosity": "low",
+			"permissions": {
+				"skill": {
+					"*": "deny",
+					"workflow-*": "allow",
+					"verification-before-completion": "allow",
+					"brainstorming": "allow",
+					"user-interview": "allow",
+					"orchestrator-protocol": "allow",
+					"systematic-thinking": "allow"
+				}
+			}
+		},
+		"strategist": {
+			"reasoningEffort": "high",
+			"textVerbosity": "low",
+			"permissions": {
+				"skill": {
+					"*": "deny",
+					"workflow-*": "allow",
+					"verification-before-completion": "allow",
+					"brainstorming": "allow",
+					"user-interview": "allow",
+					"orchestrator-protocol": "allow",
+					"systematic-thinking": "allow"
+				}
+			}
+		},
+		"craftsman": {
+			"reasoningEffort": "high",
+			"textVerbosity": "low",
+			"permissions": {
+				"skill": {
+					"*": "deny",
+					"workflow-*": "allow",
+					"verification-before-completion": "allow",
+					"brainstorming": "allow",
+					"user-interview": "allow",
+					"orchestrator-protocol": "allow",
+					"systematic-thinking": "allow"
+				}
+			}
+		},
+		"elder": {
+			"reasoningEffort": "high",
+			"textVerbosity": "low",
+			"permissions": {
+				"skill": {
+					"*": "deny",
+					"workflow-*": "allow",
+					"verification-before-completion": "allow",
+					"brainstorming": "allow",
+					"user-interview": "allow",
+					"orchestrator-protocol": "allow",
+					"systematic-thinking": "allow",
+					"python-dev-guidelines": "allow",
+					"python-testing-guidelines": "allow",
+					"systematic-debugging": "allow"
+				}
+			}
+		},
+		"monk": {
+			"reasoningEffort": "high",
+			"textVerbosity": "low",
+			"permissions": {
+				"skill": {
+					"*": "deny",
+					"workflow-*": "allow",
+					"verification-before-completion": "allow",
+					"brainstorming": "allow",
+					"user-interview": "allow",
+					"orchestrator-protocol": "allow",
+					"systematic-thinking": "allow"
+				}
+			}
+		},
+		"hunter": {
+			"reasoningEffort": "high",
+			"textVerbosity": "low",
+			"permissions": {
+				"skill": {
+					"*": "deny",
+					"workflow-*": "allow",
+					"verification-before-completion": "allow",
+					"brainstorming": "allow",
+					"user-interview": "allow",
+					"orchestrator-protocol": "allow",
+					"systematic-thinking": "allow"
+				}
+			}
+		},
+		"scribe": {
+			"reasoningEffort": "high",
+			"textVerbosity": "low",
+			"permissions": {
+				"skill": {
+					"*": "deny",
+					"workflow-*": "allow",
+					"verification-before-completion": "allow",
+					"brainstorming": "allow",
+					"user-interview": "allow",
+					"orchestrator-protocol": "allow",
+					"systematic-thinking": "allow"
+				}
+			}
+		},
+		"bard": {
+			"reasoningEffort": "high",
+			"textVerbosity": "low",
+			"permissions": {
+				"skill": {
+					"*": "deny",
+					"communication-style-preservation": "allow",
+					"humanizer": "allow",
+					"internal-comms": "allow",
+					"professional-communication": "allow"
+				}
+			}
+		},
+		"build": {
+			"disable": true
+		},
+		"plan": {
+			"disable": true
+		}
 	}
 }
